@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>67.0</apiVersion>
-    <description>SUB - Get My Leave Records. Read-only autolaunched flow used as an Agentforce (GenAiFunction) action. Returns the Employee Leave records belonging to the authenticated user (Employee__c = $User.Id), newest first by Start Date. No create/update/delete. Omits runInMode so it executes in the invoking user context and honors sharing/FLS/permissions. Scoping control: explicit owner filter on Employee__c. [Employee Leave Assistant]</description>
+    <description>SUB - Get My Leave Records. Read-only autolaunched flow used as an Agentforce (GenAiFunction) action. Returns the Employee Leave records belonging to the authenticated user (Employee__c = $User.Id), newest first by Start Date. No create/update/delete. Runs in SystemModeWithSharing so it does not execute in system context without sharing; record-level sharing is enforced. Scoping control: explicit owner filter on Employee__c. [Employee Leave Assistant]</description>
     <environments>Default</environments>
     <interviewLabel>SUB - Get My Leave Records {!$Flow.CurrentDateTime}</interviewLabel>
     <label>SUB - Get My Leave Records</label>
@@ -35,6 +35,7 @@
         <sortOrder>Desc</sortOrder>
         <storeOutputAutomatically>false</storeOutputAutomatically>
     </recordLookups>
+    <runInMode>SystemModeWithSharing</runInMode>
     <start>
         <locationX>50</locationX>
         <locationY>0</locationY>
