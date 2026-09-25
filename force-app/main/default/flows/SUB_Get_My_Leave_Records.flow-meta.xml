@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>67.0</apiVersion>
+    <description>SUB - Get My Leave Records. Read-only autolaunched flow used as an Agentforce (GenAiFunction) action. Returns the Employee Leave records belonging to the authenticated user (Employee__c = $User.Id), newest first by Start Date. No create/update/delete. Omits runInMode so it executes in the invoking user context and honors sharing/FLS/permissions. Scoping control: explicit owner filter on Employee__c. [Employee Leave Assistant]</description>
+    <environments>Default</environments>
+    <interviewLabel>SUB - Get My Leave Records {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>SUB - Get My Leave Records</label>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <name>Get_My_Leave_Records</name>
+        <label>Get My Leave Records</label>
+        <locationX>176</locationX>
+        <locationY>134</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <filterLogic>and</filterLogic>
+        <filters>
+            <field>Employee__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>$User.Id</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>false</getFirstRecordOnly>
+        <object>Employee_Leave__c</object>
+        <outputReference>Leave_Records</outputReference>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Name</queriedFields>
+        <queriedFields>Leave_Type__c</queriedFields>
+        <queriedFields>Status__c</queriedFields>
+        <queriedFields>Start_Date__c</queriedFields>
+        <queriedFields>End_Date__c</queriedFields>
+        <queriedFields>Reason__c</queriedFields>
+        <queriedFields>Total_Days__c</queriedFields>
+        <sortField>Start_Date__c</sortField>
+        <sortOrder>Desc</sortOrder>
+        <storeOutputAutomatically>false</storeOutputAutomatically>
+    </recordLookups>
+    <start>
+        <locationX>50</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Get_My_Leave_Records</targetReference>
+        </connector>
+    </start>
+    <status>Active</status>
+    <variables>
+        <name>Leave_Records</name>
+        <dataType>SObject</dataType>
+        <isCollection>true</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+        <objectType>Employee_Leave__c</objectType>
+    </variables>
+</Flow>

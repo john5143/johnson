@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPlannerBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Planner for the Employee Leave Assistant. Routes employee requests between the View My Leave topic (retrieves the running user&apos;s own leave records, read-only) and the Leave Policy Guidance topic (general leave guidance, no record access). Strictly read-only — no create, update, or delete.</description>
+    <genAiPlugins>
+        <genAiPluginName>Leave_Information</genAiPluginName>
+    </genAiPlugins>
+    <genAiPlugins>
+        <genAiPluginName>Leave_Policy_Guidance</genAiPluginName>
+    </genAiPlugins>
+    <masterLabel>Employee Leave Assistant</masterLabel>
+    <plannerType>AiCopilot__ReAct</plannerType>
+</GenAiPlannerBundle>

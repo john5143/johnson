@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bot xmlns="http://soap.sforce.com/2006/04/metadata">
+    <agentType>AgentforceEmployeeAgent</agentType>
+    <botMlDomain>
+        <label>Employee Leave Assistant</label>
+        <name>Employee_Leave_Assistant</name>
+    </botMlDomain>
+    <description>Employee Leave Assistant — read-only Agentforce agent that answers an authenticated employee&apos;s questions about their own leave records and provides general leave guidance. No write actions.</description>
+    <label>Employee Leave Assistant</label>
+    <logPrivateConversationData>false</logPrivateConversationData>
+    <richContentEnabled>true</richContentEnabled>
+    <sessionTimeout>0</sessionTimeout>
+    <type>InternalCopilot</type>
+</Bot>

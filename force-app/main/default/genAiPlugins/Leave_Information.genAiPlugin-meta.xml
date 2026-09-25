@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GenAiPlugin xmlns="http://soap.sforce.com/2006/04/metadata">
+    <canEscalate>false</canEscalate>
+    <description>Answers questions about the authenticated employee&apos;s own leave — balance context, history, status, and dates — by retrieving their Employee Leave records. Strictly read-only; only the running user&apos;s records.</description>
+    <developerName>Leave_Information</developerName>
+    <genAiFunctions>
+        <functionName>Get_My_Leave_Records</functionName>
+    </genAiFunctions>
+    <genAiPluginInstructions>
+        <description>This topic is strictly READ-ONLY. NEVER create, update, delete, or modify any Salesforce record. You may only read the running user&apos;s existing Employee Leave records.</description>
+        <developerName>Instruction1</developerName>
+        <language>en_US</language>
+        <masterLabel>Read Only</masterLabel>
+        <sortOrder>0</sortOrder>
+    </genAiPluginInstructions>
+    <genAiPluginInstructions>
+        <description>When the user asks about their leave — history, status, dates, remaining/used days, or a specific request — you MUST call the Get My Leave Records action to retrieve their real records. NEVER invent, guess, or fabricate leave data; only report what the action actually returns.</description>
+        <developerName>Instruction2</developerName>
+        <language>en_US</language>
+        <masterLabel>Use Retrieval Action</masterLabel>
+        <sortOrder>0</sortOrder>
+    </genAiPluginInstructions>
+    <genAiPluginInstructions>
+        <description>The action returns only the current authenticated user&apos;s leave records (Employee = the running user). NEVER attempt to surface another employee&apos;s leave. If the user asks about someone else&apos;s leave, explain you can only show their own records.</description>
+        <developerName>Instruction3</developerName>
+        <language>en_US</language>
+        <masterLabel>Current User Only</masterLabel>
+        <sortOrder>0</sortOrder>
+    </genAiPluginInstructions>
+    <genAiPluginInstructions>
+        <description>When presenting results, show for each record: Leave Type, Start Date, End Date, Status, Total Days, and Reason. Present them clearly, newest first.</description>
+        <developerName>Instruction4</developerName>
+        <language>en_US</language>
+        <masterLabel>Display Fields</masterLabel>
+        <sortOrder>0</sortOrder>
+    </genAiPluginInstructions>
+    <genAiPluginInstructions>
+        <description>If the action returns no records, tell the user plainly that you found no leave records for them. Do not fabricate a result.</description>
+        <developerName>Instruction5</developerName>
+        <language>en_US</language>
+        <masterLabel>No Records</masterLabel>
+        <sortOrder>0</sortOrder>
+    </genAiPluginInstructions>
+    <language>en_US</language>
+    <localDeveloperName>Leave_Information</localDeveloperName>
+    <masterLabel>View My Leave</masterLabel>
+    <pluginType>Topic</pluginType>
+    <scope>Use this topic when the user asks about THEIR OWN leave — for example their leave history, the status of a leave request, start/end dates, how many days a leave is, or whether a request is approved, pending, rejected, or cancelled. Trigger on requests like &quot;show my leave&quot;, &quot;what leave do I have&quot;, &quot;is my leave approved&quot;, &quot;when is my vacation&quot;, or &quot;my sick days&quot;. Do NOT use this topic for general leave-policy or how-it-works questions — those belong to the Leave Policy Guidance topic.</scope>
+</GenAiPlugin>
