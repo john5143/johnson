@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Allow_Negative_Balance__c</fullName>
+    <label>Allow Negative Balance</label>
+    <type>Checkbox</type>
+    <defaultValue>false</defaultValue>
+    <description>Whether the balance may go negative for this leave type. [Employee Leave Balance and Eligibility Engine - Sprint 1]</description>
+</CustomField>

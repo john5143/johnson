@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Country_Code__c</fullName>
+    <label>Country Code</label>
+    <type>Text</type>
+    <length>3</length>
+    <required>false</required>
+    <description>ISO country code the holiday applies to (e.g. USA, IND). Text(3). [Employee Leave Balance and Eligibility Engine - Sprint 1]</description>
+    <inlineHelpText>Up to 3-character country code (e.g. ISO 3166 alpha-3) this holiday applies to.</inlineHelpText>
+</CustomField>

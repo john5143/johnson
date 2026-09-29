@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <deploymentStatus>Deployed</deploymentStatus>
+    <description>Reference list of public/company holidays used by the Employee Leave Balance and Eligibility Engine to exclude non-working days from eligibility and day calculations. [Employee Leave Balance and Eligibility Engine - Sprint 1]</description>
+    <enableActivities>false</enableActivities>
+    <enableBulkApi>true</enableBulkApi>
+    <enableFeeds>false</enableFeeds>
+    <enableHistory>false</enableHistory>
+    <enableReports>true</enableReports>
+    <enableSearch>true</enableSearch>
+    <enableSharing>true</enableSharing>
+    <enableStreamingApi>true</enableStreamingApi>
+    <label>Leave Holiday</label>
+    <pluralLabel>Leave Holidays</pluralLabel>
+    <nameField>
+        <label>Holiday Name</label>
+        <type>Text</type>
+    </nameField>
+    <sharingModel>Read</sharingModel>
+    <externalSharingModel>Private</externalSharingModel>
+</CustomObject>

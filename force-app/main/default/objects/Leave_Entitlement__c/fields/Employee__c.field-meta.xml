@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Employee__c</fullName>
+    <label>Employee</label>
+    <type>Lookup</type>
+    <referenceTo>User</referenceTo>
+    <relationshipLabel>Leave Entitlements</relationshipLabel>
+    <relationshipName>Leave_Entitlements</relationshipName>
+    <deleteConstraint>SetNull</deleteConstraint>
+    <required>false</required>
+    <description>The employee (User) this entitlement belongs to. [Employee Leave Balance and Eligibility Engine - Sprint 1]</description>
+    <inlineHelpText>The employee this leave entitlement record applies to.</inlineHelpText>
+</CustomField>

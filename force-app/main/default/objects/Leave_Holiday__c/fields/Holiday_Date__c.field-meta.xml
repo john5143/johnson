@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Holiday_Date__c</fullName>
+    <label>Holiday Date</label>
+    <type>Date</type>
+    <required>false</required>
+    <description>The calendar date of the holiday. [Employee Leave Balance and Eligibility Engine - Sprint 1]</description>
+    <inlineHelpText>The date on which this holiday falls.</inlineHelpText>
+</CustomField>

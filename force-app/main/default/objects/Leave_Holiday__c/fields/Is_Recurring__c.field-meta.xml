@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Is_Recurring__c</fullName>
+    <label>Is Recurring</label>
+    <type>Checkbox</type>
+    <defaultValue>false</defaultValue>
+    <description>Indicates the holiday recurs on the same date every year. [Employee Leave Balance and Eligibility Engine - Sprint 1]</description>
+    <inlineHelpText>Check if this holiday recurs on the same date each year.</inlineHelpText>
+</CustomField>

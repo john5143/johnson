@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Allow_Half_Day__c</fullName>
+    <label>Allow Half Day</label>
+    <type>Checkbox</type>
+    <defaultValue>false</defaultValue>
+    <description>Whether half-day requests are permitted for this leave type. [Employee Leave Balance and Eligibility Engine - Sprint 1]</description>
+</CustomField>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>Leave Policy</label>
+    <pluralLabel>Leave Policies</pluralLabel>
+    <visibility>Public</visibility>
+    <description>Configuration-driven leave policy per leave type (entitlement defaults, carry-forward caps, request limits, notice, half-day and negative-balance rules) for the Employee Leave Balance and Eligibility Engine. [Employee Leave Balance and Eligibility Engine - Sprint 1]</description>
+</CustomObject>

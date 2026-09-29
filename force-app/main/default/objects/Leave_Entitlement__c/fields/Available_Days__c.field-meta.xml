@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Available_Days__c</fullName>
+    <label>Available Days</label>
+    <type>Number</type>
+    <precision>8</precision>
+    <scale>2</scale>
+    <formula>Entitled_Days__c + Carry_Forward_Days__c - Used_Days__c - Pending_Days__c</formula>
+    <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+    <description>Calculated remaining leave balance: Entitled + Carry Forward - Used - Pending. Blank inputs are treated as zero. [Employee Leave Balance and Eligibility Engine - Sprint 1]</description>
+    <inlineHelpText>Remaining leave balance available to the employee.</inlineHelpText>
+</CustomField>

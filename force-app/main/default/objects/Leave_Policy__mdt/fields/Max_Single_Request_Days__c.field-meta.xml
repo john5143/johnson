@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Max_Single_Request_Days__c</fullName>
+    <label>Max Single Request Days</label>
+    <type>Number</type>
+    <precision>6</precision>
+    <scale>2</scale>
+    <required>false</required>
+    <description>Maximum days allowed on a single leave request. Measured in days. Number(4,2) - up to 4 integer digits and 2 decimals. Value pending business input. [Employee Leave Balance and Eligibility Engine - Sprint 1]</description>
+</CustomField>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Entitled_Days__c</fullName>
+    <label>Entitled Days</label>
+    <type>Number</type>
+    <precision>6</precision>
+    <scale>2</scale>
+    <required>false</required>
+    <description>Total days of leave granted for the year before adjustments. Measured in days. Number(4,2) - up to 4 integer digits and 2 decimals. [Employee Leave Balance and Eligibility Engine - Sprint 1]</description>
+    <inlineHelpText>Total days of leave granted for the year before adjustments.</inlineHelpText>
+</CustomField>
