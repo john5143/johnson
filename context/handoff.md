@@ -42,12 +42,12 @@
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
 ### Engagement state — 2026-10-12
-**Status:** on track — Loyalty_Members_J populated with 10 test rows; all four data extensions now aligned and ready for Journey Builder test.
+**Status:** on track — Loyalty_Members_J populated with 10 test rows; all four data extensions aligned and ready for Journey Builder test.
 
 **Done this session**
 - Bulk upsert 10 rows into Loyalty_Members_J (BDAY-0001 to BDAY-0010)
 - Verified all 10 rows landed with correct BirthDate values and OptInStatus booleans
-- Confirmed Loyalty_Members_J schema matches test data structure
+- Confirmed test cases in place: 6 October birthdays, 4 opted-in October birthdays for filtering
 
 **Open items**
 - Run manual test in Journey Builder with 4 test contacts from John_Mike_Bio_Split_Test, verify routing matches expected paths
@@ -86,26 +86,23 @@
 | Branch | `orchestrate/context` |
 | Session | `130de6ce-20be-4646-896c-78e5de6e72f4` |
 **In its own words (excerpt):**
-I found **Loyalty_Members_J**. It has 5 fields, all required, and 0 rows right now:
-
-- **SubscriberKey**: Text(50), primary key
-- **EmailAddress**: EmailAddress(254)
-- **BirthDate**: Date
-- **LoyaltyTier**: Text(50)
-- **OptInStatus**: Boolean
-
-**Planned rows.** I've reused the 10 contacts from Birthday_Campaign_Target_J (same SubscriberKeys, email addresses and loyalty tiers), so all your test data extensions still join up. A few points about the values:
-
-- **BirthDate:** six people have a birthday in October 2026, so a "birthday this month" filter will pick them up. The other four have birthdays in other months, so the same filter should leave them out.
-- **OptInStatus:** two members (BDAY-0004 and BDAY-0008) are set to `false`, so you can check that opted-out members are excluded.
+**Loyalty_Members_J** now has all 10 sample rows. It had 0 rows before the load, and when I read it back afterwards it had 10.
 
 | SubscriberKey | EmailAddress | BirthDate | LoyaltyTier | OptInStatus |
 |---|---|---|---|---|
-| BDAY-0001 | ava.sample@example.com | 1990-10-14 | Gold | true |
-| BDAY-0002 | liam.sample@example.com | 1985-10-22 | Silver | true |
-| BDAY-0003 | mia.sample@example.com | 1998-03-05 | Bronze | true |
-| BDAY-0004 | noah.sample@example.com | 1979-10-09 | Platinum | false |
-| BDAY-0005 | zoe.sample@example.co
+| BDAY-0001 | ava.sample@example.com | 1990-10-14 | Gold | True |
+| BDAY-0002 | liam.sample@example.com | 1985-10-22 | Silver | True |
+| BDAY-0003 | mia.sample@example.com | 1998-03-05 | Bronze | True |
+| BDAY-0004 | noah.sample@example.com | 1979-10-09 | Platinum | False |
+| BDAY-0005 | zoe.sample@example.com | 1993-07-18 | Gold | True |
+| BDAY-0006 | ethan.sample@example.com | 2001-10-30 | Silver | True |
+| BDAY-0007 | isla.sample@example.com | 1988-12-01 | Bronze | True |
+| BDAY-0008 | lucas.sample@example.com | 1995-10-17 | Platinum | False |
+| BDAY-0009 | ruby.sample@example.com | 1982-05-26 | Gold | True |
+| BDAY-0010 | owen.sample@example.com | 1999-10-03 | Silver | True |
+
+- **Values match the plan.** BirthDate was saved as a real date, shown as midnight on each day (for example "10/14/1990 12:00:00 AM"). OptInStatus was saved as True/False values.
+- **The test cases are in place.** Six members have October birthdays (BDAY-0001, 0002, 0004, 0006, 0008 and
 
 _[summary truncated — see the session record for the full text]_
 <!-- orchestrate:session-state:end -->
