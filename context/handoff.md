@@ -42,14 +42,13 @@
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
 ### Engagement state — 2026-10-12
-**Status:** on track — Campaign_Send_Log_J discovered and ready for sample data load; Birthday_Campaign_Target_J populated
+**Status:** on track — Campaign_Send_Log_J loaded with 10 test rows; ready for Journey Builder manual test
 
 **Done this session**
-- Found Campaign_Send_Log_J with 4 required fields (LogID, SubscriberKey, EmailName, SendDate); 0 rows currently
-- Planned 10 sample log rows matching SubscriberKeys in Birthday_Campaign_Target_J for join testing
+- Bulk upsert of 10 sample rows into Campaign_Send_Log_J completed
+- Verified all 10 rows landed with correct dates and SubscriberKey matches
 
 **Open items**
-- Load 10 sample rows into Campaign_Send_Log_J via bulk upsert and verify all rows landed with correct dates
 - Run manual test in Journey Builder with 4 test contacts from John_Mike_Bio_Split_Test, verify routing matches expected paths
 - Replace four *.sample@example.com test addresses in John_Mike_JB_Test with controlled addresses before publishing
 - Publish John_Mike_JB_Test journey after test confirms routing
@@ -69,9 +68,9 @@
 - None
 
 **Next**
-- Proceed with bulk upsert of 10 rows into Campaign_Send_Log_J
-- Read Campaign_Send_Log_J back to verify all 10 rows landed with correct dates
 - Open John_Mike_JB_Test in Journey Builder and run manual test with 4 contacts from John_Mike_Bio_Split_Test
+- Verify routing matches expected paths based on Bio_Check conditions
+- Replace test email addresses before publishing journey
 
 **Checked live on 2026-10-12:** the Salesforce org
 ### Last session — 2026-10-12
@@ -82,14 +81,7 @@
 | Branch | `orchestrate/context` |
 | Session | `130de6ce-20be-4646-896c-78e5de6e72f4` |
 **In its own words (excerpt):**
-I found **Campaign_Send_Log_J**. It has 4 fields, all required, and currently 0 rows:
-
-- **LogID**: Text(50), primary key
-- **SubscriberKey**: Text(50)
-- **EmailName**: Text(50)
-- **SendDate**: Date
-
-**Planned rows.** The SubscriberKeys match the 10 contacts already in Birthday_Campaign_Target_J, so the two data extensions join up for testing:
+All 10 sample rows are now in **Campaign_Send_Log_J**. I read the data extension back afterwards: it had 0 rows before and now has 10.
 
 | LogID | SubscriberKey | EmailName | SendDate |
 |---|---|---|---|
@@ -104,7 +96,8 @@ I found **Campaign_Send_Log_J**. It has 4 fields, all required, and currently 0 
 | LOG-0009 | BDAY-0009 | Birthday_Coupon_Reminder | 2026-10-09 |
 | LOG-0010 | BDAY-0010 | Birthday_Coupon_Reminder | 2026-10-10 |
 
-**Tool call:** one bulk upsert of these 10 rows into Campaign_Send_Log_J. I'll read the data extension back afterwards to check that al
+- **Values match the plan.** Each row has the values I proposed. SendDate was stored as a real date: Marketing Cloud shows it as midnight on each day (for example "10/1/2026 12:00:00 AM"), not as text.
+- **The two data extensions join up.** Each SubscriberKey matches a contact already in Birthday_Campaign_Target_J, so you can test SQL joins or 
 
 _[summary truncated — see the session record for the full text]_
 <!-- orchestrate:session-state:end -->
