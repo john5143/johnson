@@ -42,12 +42,12 @@
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
 ### Engagement state — 2026-10-12
-**Status:** on track — Cart_Abandonment_Target_J loaded with 10 test rows; all three data extensions now aligned. Ready for Journey Builder manual test.
+**Status:** on track — Loyalty_Members_J populated with 10 test rows; all four data extensions now aligned and ready for Journey Builder test.
 
 **Done this session**
-- Bulk upsert 10 rows into Cart_Abandonment_Target_J (BDAY-0001 to BDAY-0010)
-- Verified all 10 rows landed with correct AbandonDate values and whole-number CartTotal amounts
-- Confirmed Cart_Abandonment_Target_J schema matches Cart_Abandonment_J (SubscriberKey, AbandonDate, CartTotal)
+- Bulk upsert 10 rows into Loyalty_Members_J (BDAY-0001 to BDAY-0010)
+- Verified all 10 rows landed with correct BirthDate values and OptInStatus booleans
+- Confirmed Loyalty_Members_J schema matches test data structure
 
 **Open items**
 - Run manual test in Journey Builder with 4 test contacts from John_Mike_Bio_Split_Test, verify routing matches expected paths
@@ -86,28 +86,26 @@
 | Branch | `orchestrate/context` |
 | Session | `130de6ce-20be-4646-896c-78e5de6e72f4` |
 **In its own words (excerpt):**
-I found **Cart_Abandonment_Target_J**. It has 3 fields, all required, and 0 rows right now:
+I found **Loyalty_Members_J**. It has 5 fields, all required, and 0 rows right now:
 
 - **SubscriberKey**: Text(50), primary key
-- **AbandonDate**: Date
-- **CartTotal**: Decimal, scale 0 (whole numbers only, the same as Cart_Abandonment_J)
+- **EmailAddress**: EmailAddress(254)
+- **BirthDate**: Date
+- **LoyaltyTier**: Text(50)
+- **OptInStatus**: Boolean
 
-**Planned rows.** SubscriberKey is the primary key, so each contact can only appear once. I've used the same 10 contacts (BDAY-0001 to BDAY-0010) with the same dates and totals as Cart_Abandonment_J. That makes this data extension look like the output of a targeting query over that one, which keeps your test data consistent:
+**Planned rows.** I've reused the 10 contacts from Birthday_Campaign_Target_J (same SubscriberKeys, email addresses and loyalty tiers), so all your test data extensions still join up. A few points about the values:
 
-| SubscriberKey | AbandonDate | CartTotal |
-|---|---|---|
-| BDAY-0001 | 2026-10-01 | 129 |
-| BDAY-0002 | 2026-10-02 | 45 |
-| BDAY-0003 | 2026-10-03 | 310 |
-| BDAY-0004 | 2026-10-04 | 78 |
-| BDAY-0005 | 2026-10-05 | 560 |
-| BDAY-0006 | 2026-10-06 | 22 |
-| BDAY-0007 | 2026-10-07 | 199 |
-| BDAY-0008 | 2026-10-08 | 87 |
-| BDAY-0009 | 2026-10-09 | 415 |
-| BDAY-0010 | 2026-10-10 | 64 |
+- **BirthDate:** six people have a birthday in October 2026, so a "birthday this month" filter will pick them up. The other four have birthdays in other months, so the same filter should leave them out.
+- **OptInStatus:** two members (BDAY-0004 and BDAY-0008) are set to `false`, so you can check that opted-out members are excluded.
 
-**Tool call:** one bulk upsert of these 10 rows into Cart_Abandonment_Target_J. Afterwards I'll read the data extension back to check that all 10 rows landed with real Date values and whole-number totals. This only writes data and doesn't s
+| SubscriberKey | EmailAddress | BirthDate | LoyaltyTier | OptInStatus |
+|---|---|---|---|---|
+| BDAY-0001 | ava.sample@example.com | 1990-10-14 | Gold | true |
+| BDAY-0002 | liam.sample@example.com | 1985-10-22 | Silver | true |
+| BDAY-0003 | mia.sample@example.com | 1998-03-05 | Bronze | true |
+| BDAY-0004 | noah.sample@example.com | 1979-10-09 | Platinum | false |
+| BDAY-0005 | zoe.sample@example.co
 
 _[summary truncated — see the session record for the full text]_
 <!-- orchestrate:session-state:end -->
