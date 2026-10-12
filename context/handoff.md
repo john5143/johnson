@@ -42,15 +42,14 @@
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
 ### Engagement state — 2026-10-12
-**Status:** on track — Cart_Abandonment_J discovered & ready for load; 10 test rows planned, SubscriberKeys match existing contacts
+**Status:** on track — Cart_Abandonment_J loaded with 10 test rows; all dates & totals verified. Ready for Journey Builder manual test.
 
 **Done this session**
-- Located Cart_Abandonment_J in Salesforce org
-- Verified schema: CartID (PK), SubscriberKey, AbandonDate, CartTotal (Decimal, scale 0)
-- Planned 10 test rows with whole-dollar amounts, all SubscriberKeys match Birthday_Campaign_Target_J & Campaign_Send_Log_J
+- Bulk upsert 10 rows into Cart_Abandonment_J (CART-0001 through CART-0010)
+- Verified all 10 rows landed with correct AbandonDate values and whole-number CartTotal amounts
+- Confirmed three data extensions now join on matching SubscriberKeys (BDAY-0001 to BDAY-0010)
 
 **Open items**
-- Bulk upsert 10 rows into Cart_Abandonment_J and verify all landed with correct dates and totals
 - Run manual test in Journey Builder with 4 test contacts from John_Mike_Bio_Split_Test, verify routing matches expected paths
 - Replace four *.sample@example.com test addresses in John_Mike_JB_Test with controlled addresses before publishing
 - Publish John_Mike_JB_Test journey after test confirms routing
@@ -71,9 +70,10 @@
 - None
 
 **Next**
-- Proceed with bulk upsert of 10 Cart_Abandonment_J rows (CART-0001 through CART-0010)
-- Read Cart_Abandonment_J back to verify all 10 rows landed with real Date values and whole-number totals
 - Open John_Mike_JB_Test in Journey Builder and run manual test with 4 contacts from John_Mike_Bio_Split_Test
+- Verify routing matches expected paths based on Bio_Check conditions
+- Replace sample@example.com test addresses with controlled addresses
+- Publish journey after test confirms routing
 
 **Checked live on 2026-10-12:** the Salesforce org
 ### Last session — 2026-10-12
@@ -84,16 +84,7 @@
 | Branch | `orchestrate/context` |
 | Session | `130de6ce-20be-4646-896c-78e5de6e72f4` |
 **In its own words (excerpt):**
-I found **Cart_Abandonment_J**. It has 4 fields, all required, and currently 0 rows:
-
-- **CartID**: Text(50), primary key
-- **SubscriberKey**: Text(50)
-- **AbandonDate**: Date
-- **CartTotal**: Decimal, with **scale 0**
-
-**About CartTotal:** it's set up with no decimal places, so it can't hold cents. A value like 129.99 would be rounded or rejected. I've used whole-dollar amounts below. If you need cents, the field's scale has to be changed to 2 first. That's a separate change and I'd ask you before making it.
-
-**Planned rows.** The SubscriberKeys match the contacts already in Birthday_Campaign_Target_J and Campaign_Send_Log_J, so all three data extensions join up:
+All 10 sample rows are now in **Cart_Abandonment_J**. I read the data extension back afterwards: it had 0 rows before and has 10 now.
 
 | CartID | SubscriberKey | AbandonDate | CartTotal |
 |---|---|---|---|
@@ -108,7 +99,7 @@ I found **Cart_Abandonment_J**. It has 4 fields, all required, and currently 0 r
 | CART-0009 | BDAY-0009 | 2026-10-09 | 415 |
 | CART-0010 | BDAY-0010 | 2026-10-10 | 64 |
 
-**Tool ca
-
-_[summary truncated — see the session record for the full text]_
+- **The values match the plan.** AbandonDate was stored as a real date, shown as midnight on each day (for example "10/1/2026 12:00:00 AM"). CartTotal holds whole numbers with nothing rounded.
+- **All three data extensions now join up.** Birthday_Campaign_Target_J, Campaign_Send_Log_J and Cart_Abandonment_J share the same 10 SubscriberKeys (BDAY-0001 to BDAY-0010), so you can test SQL joins across them.
+- **No email was sent.** This only wrote data.
 <!-- orchestrate:session-state:end -->
