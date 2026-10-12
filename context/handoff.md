@@ -42,37 +42,37 @@
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
 ### Engagement state — 2026-10-12
-**Status:** on track — Platform_Interactions_J loaded & verified with 10 rows. All date fields saved correctly. Ready for journey testing.
+**Status:** on track — Purchase_History_J schema reviewed; 10 test rows ready to load. OrderAmount scale (0) flagged for confirmation.
 
 **Done this session**
-- Loaded 10 interaction rows into Platform_Interactions_J via bulk upsert
-- Verified all 10 rows persisted with correct InteractionDate values as real dates
-- Confirmed repeat contacts (BDAY-0001, BDAY-0006) for testing deduplication logic
+- Reviewed Purchase_History_J schema: 4 required fields, 0 rows
+- Identified OrderAmount Decimal(18,0) scale limitation — cannot store cents
+- Planned 10 purchase rows aligned with existing BDAY- contacts for join testing
 
 **Open items**
+- Confirm whether OrderAmount scale should be changed to Decimal(18,2) before load
+- Load 10 rows into Purchase_History_J via bulk upsert (pending schema confirmation)
+- Verify all 10 rows persisted with correct PurchaseDate as real dates
 - Run manual test in Journey Builder with 4 test contacts from John_Mike_Bio_Split_Test
 - Replace sample@example.com addresses in John_Mike_JB_Test with controlled test addresses
 - Publish John_Mike_JB_Test journey after routing confirmed
-- Run entry source automation to test actual contact routing through journey
 - Resolve testOrchestrateMap error from previous automation run
-- Make Birthday_Campaign_Target_J sendable if using as journey entry source
-- Make Cart_Abandonment_Target_J sendable if using as journey entry source or send audience
 
 **Decisions**
-- Master_Subscribers_J test data: 10 rows (BDAY-0001 to BDAY-0010) with mixed Status values
-- Inactive_Purge_Target_J test data: 10 rows with separate PURGE- keys
-- Platform_Interactions_J test data: 10 rows (INT-0001 to INT-0010) using same BDAY- keys for join alignment
+- Master_Subscribers_J: 10 rows (BDAY-0001 to BDAY-0010) with mixed Status values
+- Inactive_Purge_Target_J: 10 rows with separate PURGE- keys
+- Platform_Interactions_J: 10 rows (INT-0001 to INT-0010) loaded and verified
+- Purchase_History_J test data: 10 rows (PUR-0001 to PUR-0010) using same BDAY- keys for join alignment
 - Entry source: DEAudience-John_Mike_JB_Test-20261009 from John_Mike_Bio_Split_Test, no schedule
 - Bio_Check condition 1: IsNotNull; condition 2: NotEqual 'No Biography is Available here.'
-- 30-day filter excludes only INT-0008 (2026-08-20); 21-day filter excludes INT-0008 and INT-0004
 
 **Blockers**
-- None
+- OrderAmount field scale (0) cannot store decimal values — confirm fix before loading Purchase_History_J
 
 **Next**
-- Run manual test in Journey Builder with 4 test contacts from John_Mike_Bio_Split_Test
-- Verify journey entry and routing logic with Platform_Interactions_J join data
-- Replace sample@example.com test addresses before publishing journey
+- Confirm OrderAmount schema change to Decimal(18,2) or proceed with whole-number amounts only
+- Load 10 purchase rows into Purchase_History_J and verify persistence and date formatting
+- Run manual journey test with 4 contacts from John_Mike_Bio_Split_Test
 
 **Checked live on 2026-10-12:** the Salesforce org
 ### Last session — 2026-10-12
@@ -83,23 +83,18 @@
 | Branch | `orchestrate/context` |
 | Session | `130de6ce-20be-4646-896c-78e5de6e72f4` |
 **In its own words (excerpt):**
-I loaded all 10 sample rows into **Platform_Interactions_J**. It had 0 rows before, and when I read it back it had 10.
+I found **Purchase_History_J**. It has 4 fields, all required, and 0 rows right now:
 
-| InteractionID | SubscriberKey | InteractionType | InteractionDate |
-|---|---|---|---|
-| INT-0001 | BDAY-0001 | EmailOpen | 2026-10-01 |
-| INT-0002 | BDAY-0001 | EmailClick | 2026-10-02 |
-| INT-0003 | BDAY-0002 | WebVisit | 2026-10-03 |
-| INT-0004 | BDAY-0003 | AppLogin | 2026-09-15 |
-| INT-0005 | BDAY-0005 | Purchase | 2026-10-05 |
-| INT-0006 | BDAY-0006 | WebVisit | 2026-10-06 |
-| INT-0007 | BDAY-0006 | AddToCart | 2026-10-06 |
-| INT-0008 | BDAY-0007 | EmailOpen | 2026-08-20 |
-| INT-0009 | BDAY-0009 | AppLogin | 2026-10-08 |
-| INT-0010 | BDAY-0010 | EmailClick | 2026-10-09 |
+- **PurchaseID**: Text(50), primary key
+- **SubscriberKey**: Text(50). It isn't a key here, so one contact can have several purchases.
+- **PurchaseDate**: Date
+- **OrderAmount**: Decimal(18, **0**)
 
-- **The rows match the plan.** InteractionDate was saved as a real date, which Marketing Cloud shows as midnight on each day (for example "10/1/2026 12:00:00 AM").
-- **Correction to what I said in the plan.** I said BDAY-0003 and BDAY-0007 both had dates old enough to fall outside a "last 30 days" filter. That's only true for BDAY-0007 (2026-08-20). BDAY-0003's date, 2026-09-15, was 27 days ago, so it's still inside 30 days. With today's date (2026-10-12), a 30-day filter excludes only INT
+**Something to check before loading: OrderAmount has a scale of 0.** That means it can't store cents. A value like 49.99 would be saved as 50 or 49, or might be rejected. I've used whole-number amounts below so nothing gets changed on the way in. If this field is meant to hold real prices, it probably needs a scale of 2, for example Decimal(18,2). Tell me if you'd like that fixed first. It's a schema change that can't be automatically undone, so I'd confirm it with you separately.
+
+**Planned rows.** These use the same BDAY- contacts as your other test data extensions, so the joins still line up. BDAY-0001 and BDAY-0005 each have two purchases, so you can test totals and "latest purchase" logic per contact. BDAY-0004 and BDAY-0008 (the unsubscribed contacts) are left out. Two purchases fall outside a 30-day window, which gives a date filter something to exclude.
+
+| PurchaseID | SubscriberKey | PurchaseD
 
 _[summary truncated — see the session record for the full text]_
 <!-- orchestrate:session-state:end -->
