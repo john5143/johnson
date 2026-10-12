@@ -42,16 +42,16 @@
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
 ### Engagement state — 2026-10-12
-**Status:** on track — Raw_Transactions_J loaded & verified: 10 rows persisted with exact amounts & real dates. OrderAmount scale decision pending.
+**Status:** on track — Staging_Active_Subscribers_J identified & ready to load: 10 test rows planned, includes inactive contacts for filtering validation
 
 **Done this session**
-- Bulk upsert of 10 test rows into Raw_Transactions_J completed
-- Verified all 10 rows persisted with exact Amount values and real TransactionDate
-- Confirmed 30-day date window filtering works (excludes TXN-0004, TXN-0008)
-- Validated multi-transaction customer logic (BDAY-0002, BDAY-0006 totals require CAST)
+- Located Staging_Active_Subscribers_J in Salesforce org
+- Confirmed schema: SubscriberKey (Text 50, PK) + LastInteractionDate (Date), 0 rows current
+- Planned 10 test rows with dates from Platform_Interactions_J or synthetic older dates
 
 **Open items**
-- Decide: keep OrderAmount as Decimal(18,0) or change to Decimal(18,2) in Purchase_History_J
+- Load & verify 10 rows into Staging_Active_Subscribers_J (bulk upsert pending approval)
+- Decide: OrderAmount scale change for Purchase_History_J (Decimal(18,0) vs Decimal(18,2))
 - Run manual test in Journey Builder with 4 test contacts from John_Mike_Bio_Split_Test
 - Replace sample@example.com addresses in John_Mike_JB_Test with controlled test addresses
 - Publish John_Mike_JB_Test journey after routing confirmed
@@ -59,16 +59,17 @@
 
 **Decisions**
 - Raw_Transactions_J Amount field remains Text(50) — staging table design confirmed
+- Staging_Active_Subscribers_J will include all 10 contacts (BDAY-0001 to BDAY-0010) including inactive ones for filtering validation
 - All previous decisions from 2026-10-12 remain in effect
 
 **Blockers**
 - OrderAmount field scale (0) in Purchase_History_J cannot store decimal values — decision pending on schema change
 
 **Next**
-- Decide OrderAmount scale change for Purchase_History_J (Decimal(18,0) vs Decimal(18,2))
+- Approve & execute bulk upsert of 10 rows into Staging_Active_Subscribers_J
+- Verify all 10 rows persisted with correct LastInteractionDate values
+- Decide OrderAmount scale change for Purchase_History_J
 - Proceed to Journey Builder manual test with John_Mike_Bio_Split_Test contacts
-- Replace sample@example.com test addresses in John_Mike_JB_Test
-- Resolve testOrchestrateMap automation error
 
 **Checked live on 2026-10-12:** the Salesforce org
 ### Last session — 2026-10-12
@@ -79,24 +80,24 @@
 | Branch | `orchestrate/context` |
 | Session | `130de6ce-20be-4646-896c-78e5de6e72f4` |
 **In its own words (excerpt):**
-**Raw_Transactions_J** now has all 10 sample rows. It had 0 rows before the load, and when I read it back it had 10.
+I found **Staging_Active_Subscribers_J**. It has 2 fields, both required, and 0 rows right now:
 
-| TransactionID | CustomerID | StoreLocation | Amount | TransactionDate |
-|---|---|---|---|---|
-| TXN-0001 | BDAY-0001 | Online | 49.99 | 2026-10-01 |
-| TXN-0002 | BDAY-0002 | Downtown | 125.50 | 2026-09-22 |
-| TXN-0003 | BDAY-0002 | Online | 18.75 | 2026-10-07 |
-| TXN-0004 | BDAY-0003 | Northgate Mall | 240.00 | 2026-08-30 |
-| TXN-0005 | BDAY-0005 | Airport | 12.40 | 2026-10-03 |
-| TXN-0006 | BDAY-0006 | Downtown | 89.95 | 2026-10-05 |
-| TXN-0007 | BDAY-0006 | Westfield | 310.20 | 2026-10-09 |
-| TXN-0008 | BDAY-0007 | Northgate Mall | 64.00 | 2026-07-18 |
-| TXN-0009 | BDAY-0009 | Online | 499.99 | 2026-10-10 |
-| TXN-0010 | BDAY-0010 | Westfield | 35.25 | 2026-10-11 |
+- **SubscriberKey**: Text(50), primary key, so each contact can appear only once
+- **LastInteractionDate**: Date
 
-- **Every value matches the plan.** Amount saved exactly as written, including the trailing zeros like "125.50" and "240.00", because the field is text. TransactionDate saved as a real date, which Marketing Cloud shows as midnight on each day.
-- **Testing the date window:** a "last 30 days" filter (from 2026-09-12) leaves out TXN-0004 and TXN-0008.
-- **Customers with more than one transaction:** BDAY-
+**The rows I'd load.** Because SubscriberKey is the primary key, I need 10 different contacts. I've used BDAY-0001 to BDAY-0010 so joins with your other test data extensions still work. For the 8 contacts that have rows in Platform_Interactions_J, LastInteractionDate is their latest interaction date there, so the two data extensions agree. BDAY-0004 and BDAY-0008 have no interactions, so I gave them older dates.
+
+| SubscriberKey | LastInteractionDate | Source of date |
+|---|---|---|
+| BDAY-0001 | 2026-10-02 | latest in Platform_Interactions_J |
+| BDAY-0002 | 2026-10-03 | latest in Platform_Interactions_J |
+| BDAY-0003 | 2026-09-15 | latest in Platform_Interactions_J |
+| BDAY-0004 | 2026-06-30 | made up (older) |
+| BDAY-0005 | 2026-10-05 | latest in Platform_Interactions_J |
+| BDAY-0006 | 2026-10-06 | latest in Platform_Interactions_J |
+| BDAY-0007 | 2026-08-20 | latest in Platform_Interactions_J |
+| BDAY-0008 | 2026-05-14 | made up (older) |
+| BDAY-0009 | 2026-10-08 | latest
 
 _[summary truncated — see the session record for the full text]_
 <!-- orchestrate:session-state:end -->
