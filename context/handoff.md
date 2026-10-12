@@ -42,18 +42,15 @@
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
 ### Engagement state — 2026-10-12
-**Status:** on track — Purchases_J ready for load: 10 rows planned, schema confirmed (no OrderAmount field), awaiting approval to proceed
+**Status:** on track — Purchases_J loaded: 10 rows verified. OrderAmount scale decision pending. Ready for journey test.
 
 **Done this session**
-- Identified Purchases_J data extension: 3 required fields (PurchaseID, SubscriberKey, PurchaseDate), 0 rows
-- Planned 10 rows reusing PUR-0001 to PUR-0010 IDs and dates from Purchase_History_J for alignment
-- Confirmed unsubscribed contacts (BDAY-0004, BDAY-0008) excluded from Purchases_J load
+- Loaded 10 rows into Purchases_J via bulk upsert
+- Read back Purchases_J and confirmed all 10 rows persisted with real dates
+- Verified PurchaseIDs, SubscriberKeys, and dates match Purchase_History_J for join alignment
 
 **Open items**
-- Approve Purchases_J load plan or request different data (dates/IDs) before proceeding
-- Load 10 rows into Purchases_J via bulk upsert
-- Read back Purchases_J to confirm all 10 rows persisted with real dates
-- Confirm whether OrderAmount scale should be changed to Decimal(18,2) in Purchase_History_J
+- Decide: keep OrderAmount as Decimal(18,0) or change to Decimal(18,2) in Purchase_History_J
 - Run manual test in Journey Builder with 4 test contacts from John_Mike_Bio_Split_Test
 - Replace sample@example.com addresses in John_Mike_JB_Test with controlled test addresses
 - Publish John_Mike_JB_Test journey after routing confirmed
@@ -64,7 +61,7 @@
 - Inactive_Purge_Target_J: 10 rows with separate PURGE- keys
 - Platform_Interactions_J: 10 rows (INT-0001 to INT-0010) loaded and verified
 - Purchase_History_J: 10 rows (PUR-0001 to PUR-0010) using BDAY- keys for join alignment
-- Purchases_J: 10 rows planned, reusing same PurchaseIDs and dates as Purchase_History_J for data alignment
+- Purchases_J: 10 rows loaded, reusing same PurchaseIDs and dates as Purchase_History_J
 - Entry source: DEAudience-John_Mike_JB_Test-20261009 from John_Mike_Bio_Split_Test, no schedule
 - Bio_Check condition 1: IsNotNull; condition 2: NotEqual 'No Biography is Available here.'
 
@@ -72,10 +69,11 @@
 - OrderAmount field scale (0) in Purchase_History_J cannot store decimal values — decision pending on schema change
 
 **Next**
-- Approve or modify Purchases_J load plan (10 rows with PUR-0001 to PUR-0010, BDAY keys, dates from Purchase_History_J)
-- Execute bulk upsert of 10 rows into Purchases_J
-- Read back Purchases_J to verify all 10 rows persisted with real dates
 - Decide: keep OrderAmount as Decimal(18,0) or change to Decimal(18,2)
+- Run manual test in Journey Builder with 4 test contacts from John_Mike_Bio_Split_Test
+- Replace sample@example.com addresses in John_Mike_JB_Test with controlled test addresses
+- Publish John_Mike_JB_Test journey after routing confirmed
+- Resolve testOrchestrateMap error from previous automation run
 
 **Checked live on 2026-10-12:** the Salesforce org
 ### Last session — 2026-10-12
@@ -86,15 +84,7 @@
 | Branch | `orchestrate/context` |
 | Session | `130de6ce-20be-4646-896c-78e5de6e72f4` |
 **In its own words (excerpt):**
-I found **Purchases_J**. It has 3 fields, all required, and 0 rows at the moment:
-
-- **PurchaseID**: Text(50), primary key
-- **SubscriberKey**: Text(50). It isn't a key, so one contact can have several purchases.
-- **PurchaseDate**: Date
-
-It has the same layout as Purchase_History_J but no OrderAmount field, so the scale problem from that one doesn't apply here.
-
-**Planned rows.** I've reused the same PurchaseIDs, contacts and dates you already have in Purchase_History_J. That way the two data extensions agree, and any join or comparison between them lines up. BDAY-0001 and BDAY-0005 each have 2 purchases. The unsubscribed contacts, BDAY-0004 and BDAY-0008, are left out.
+**Purchases_J** now has all 10 sample rows. It had 0 rows before the load, and when I read it back it had 10.
 
 | PurchaseID | SubscriberKey | PurchaseDate |
 |---|---|---|
@@ -109,7 +99,12 @@ It has the same layout as Purchase_History_J but no OrderAmount field, so the sc
 | PUR-0009 | BDAY-0009 | 2026-10-08 |
 | PUR-0010 | BDAY-0010 | 2026-10-11 |
 
-Today is 2026-10-12. A "purchased in the last 30 days" filter on these rows wo
+- **Every row matches the plan.** PurchaseDate was saved as a real date. Marketing Cloud shows each one as midnight on that day, for example "9/20/2026 12:00:00 AM".
+- **The rows line up with Purchase_History_J.** Both data extensions have the same PurchaseIDs, contacts and dates, so you can join them on PurchaseID to bring in OrderAmount.
+- **The date filter has rows to exclude.** A "purchased in the last 30 days" filter (2026-09-12 onward) leaves out PUR-0004 and PUR-0008.
+- **No email was sent.** This only wrote data.
+
+**Test data status:** Birthday_Campaign_Target_J, Campaign_Send_Log_J, Cart_Abandonment_J, Loyalty_Members_J, Inactive_P
 
 _[summary truncated — see the session record for the full text]_
 <!-- orchestrate:session-state:end -->
