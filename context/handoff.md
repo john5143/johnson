@@ -42,10 +42,10 @@
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
 ### Engagement state — 2026-10-12
-**Status:** on track — Master_Subscribers_J loaded with 10 test rows; five data extensions now populated. Ready for journey testing.
+**Status:** on track — Master_Subscribers_J loaded with 10 test rows verified. Ready for journey testing.
 
 **Done this session**
-- Bulk upsert 10 rows into Master_Subscribers_J (BDAY-0001 to BDAY-0010 with mixed Status values)
+- Bulk upsert 10 rows into Master_Subscribers_J (BDAY-0001 to BDAY-0010)
 - Verified all 10 rows loaded with correct SubscriberKey, Email, and Status fields
 
 **Open items**
@@ -81,16 +81,7 @@
 | Branch | `orchestrate/context` |
 | Session | `130de6ce-20be-4646-896c-78e5de6e72f4` |
 **In its own words (excerpt):**
-I found **Master_Subscribers_J**. It has 3 fields, all required, and 0 rows right now:
-
-- **SubscriberKey**: Text(50), primary key
-- **Email**: EmailAddress(254)
-- **Status**: Text(50)
-
-**Planned rows.** I've used the same 10 contacts (BDAY-0001 to BDAY-0010, with the same email addresses) as your other test data extensions, so this list joins up with them. Status is a free-text field. I've used Marketing Cloud's standard subscriber statuses so you have a mix to test against:
-
-- BDAY-0004 and BDAY-0008 are **Unsubscribed**, which matches their opted-out flag in Loyalty_Members_J.
-- One contact is **Bounced** and one is **Held**, so you can check that only Active subscribers get through.
+I loaded the 10 sample rows into **Master_Subscribers_J**. It had 0 rows before, and when I read it back afterwards it had 10.
 
 | SubscriberKey | Email | Status |
 |---|---|---|
@@ -103,7 +94,13 @@ I found **Master_Subscribers_J**. It has 3 fields, all required, and 0 rows righ
 | BDAY-0007 | isla.sample@example.com | Held |
 | BDAY-0008 | lucas.sample@example.com | Unsubscribed |
 | BDAY-0009 | ruby.sample@example.com | Active |
-| B
+| BDAY-0010 | owen.sample@example.com | Active |
+
+- **Every row matches the plan.** The keys, emails and statuses all came back as planned: 6 Active, 2 Unsubscribed, 1 Bounced and 1 Held.
+- **What you can test with it:** a filter for Active subscribers who are opted in and have a birthday this month should return BDAY-0001, 0002, 0006 and 0010. You can check that by joining this data extension with Loyalty_Members_J.
+- **Nothing changed outside this data extension.** I only wrote rows here. No one's real status in All Subscribers changed, and no email was sent.
+
+**W
 
 _[summary truncated — see the session record for the full text]_
 <!-- orchestrate:session-state:end -->
