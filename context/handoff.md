@@ -42,15 +42,15 @@
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
 ### Engagement state — 2026-10-12
-**Status:** on track — VIP_Upsell_Target_J schema confirmed; 10 test rows ready to load pending approval
+**Status:** on track — VIP_Upsell_Target_J loaded & verified: 10 rows persisted. OrderAmount scale decision still pending.
 
 **Done this session**
-- Verified VIP_Upsell_Target_J structure: SubscriberKey (PK), TotalSpent Decimal(18,0), PrimaryStore Text(50)
-- Prepared 10 test rows (BDAY-0001 to BDAY-0010) with VIP-level spend amounts and store names
+- Loaded 10 test rows into VIP_Upsell_Target_J
+- Verified all 10 rows persisted with correct TotalSpent (whole numbers) and PrimaryStore values
+- Confirmed filter logic: TotalSpent ≥ 1000 removes BDAY-0003, BDAY-0007; Active-only join removes BDAY-0004, BDAY-0008
 
 **Open items**
 - Decide: OrderAmount scale change for Purchase_History_J (Decimal(18,0) vs Decimal(18,2))
-- Approve and load 10 rows into VIP_Upsell_Target_J, then verify persistence
 - Run manual test in Journey Builder with 4 test contacts from John_Mike_Bio_Split_Test
 - Replace sample@example.com addresses in John_Mike_JB_Test with controlled test addresses
 - Publish John_Mike_JB_Test journey after routing confirmed
@@ -61,14 +61,15 @@
 - Raw_Transactions_J Amount field remains Text(50) — staging table design confirmed
 - Staging_Active_Subscribers_J includes all 10 contacts (BDAY-0001 to BDAY-0010) including inactive ones for filtering validation
 - VIP_Upsell_Target_J test data uses whole numbers; TotalSpent scale decision deferred to separate change
+- VIP_Upsell_Target_J 10-row load approved and completed
 
 **Blockers**
 - OrderAmount field scale (0) in Purchase_History_J cannot store decimal values — decision pending on schema change
 
 **Next**
-- Approve load of 10 rows into VIP_Upsell_Target_J
-- Verify all 10 rows persisted with correct TotalSpent and PrimaryStore values
-- Decide OrderAmount scale change for Purchase_History_J
+- Decide OrderAmount scale for Purchase_History_J (Decimal(18,0) vs Decimal(18,2))
+- Run manual Journey Builder test with 4 contacts from John_Mike_Bio_Split_Test
+- Replace sample@example.com in John_Mike_JB_Test with controlled test addresses
 
 **Checked live on 2026-10-12:** the Salesforce org
 ### Last session — 2026-10-12
@@ -79,15 +80,7 @@
 | Branch | `orchestrate/context` |
 | Session | `130de6ce-20be-4646-896c-78e5de6e72f4` |
 **In its own words (excerpt):**
-I found **VIP_Upsell_Target_J**. It has 3 fields, all required, and no rows yet:
-
-- **SubscriberKey**: Text(50), primary key, so each contact can appear only once
-- **TotalSpent**: Decimal(18, **0**)
-- **PrimaryStore**: Text(50)
-
-**TotalSpent has a scale of 0, so it can't store cents.** OrderAmount in Purchase_History_J has the same setting. I've used whole numbers below so nothing gets rounded when it saves. If you want this field to hold real money values, I can change it to Decimal(18,2) as a separate change, after you confirm.
-
-**The 10 rows I'd load.** The primary key means I need 10 different contacts, so I've used BDAY-0001 to BDAY-0010 to keep the joins with your other test data working. The store names match the ones in Raw_Transactions_J. The totals are made up at VIP-level amounts. They don't add up from Raw_Transactions_J, because those amounts are too small to look like VIP spend. Two contacts are under 1,000, so a spend-threshold filter has rows to drop.
+**VIP_Upsell_Target_J** now has all 10 sample rows. It had 0 rows before the load, and reading it back after the load returned 10.
 
 | SubscriberKey | TotalSpent | PrimaryStore |
 |---|---|---|
@@ -95,7 +88,22 @@ I found **VIP_Upsell_Target_J**. It has 3 fields, all required, and no rows yet:
 | BDAY-0002 | 2480 | Downtown |
 | BDAY-0003 | 980 | Northgate Mall |
 | BDAY-0004 | 1520 | Downtown |
-| BDAY-0005 | 3200 | Airp
+| BDAY-0005 | 3200 | Airport |
+| BDAY-0006 | 1875 | Westfield |
+| BDAY-0007 | 640 | Northgate Mall |
+| BDAY-0008 | 1100 | Online |
+| BDAY-0009 | 4999 | Online |
+| BDAY-0010 | 1310 | Westfield |
+
+- **Every value matches the plan.** All the TotalSpent amounts are whole numbers, so none were rounded when saved.
+- **Filters you can test:**
+  - TotalSpent ≥ 1000 removes BDAY-0003 and BDAY-0007.
+  - An Active-only join to Master_Subscribers_J also removes BDAY-0004 and BDAY-0008.
+- **No email was sent.** This load only wrote data.
+
+**Test data status:** 12 data extensions now have 10 rows each. VIP_Upsell_Target_J is the newest. Cart_Abandonment_Target_J is still empty because you cancelled that load.
+
+**Still open:** TotalSpent here and OrderAmount in Purchase_History_J are both Decimal(18,0), so they can't hold cents. If you want either to store real money values, I ca
 
 _[summary truncated — see the session record for the full text]_
 <!-- orchestrate:session-state:end -->
