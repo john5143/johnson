@@ -42,14 +42,14 @@
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
 ### Engagement state — 2026-10-12
-**Status:** on track — Platform_Interactions_J discovered & ready to load. Master_Subscribers_J verified with 10 test rows.
+**Status:** on track — Platform_Interactions_J loaded & verified with 10 rows. All date fields saved correctly. Ready for journey testing.
 
 **Done this session**
-- Discovered Platform_Interactions_J schema: 4 required fields, InteractionID as primary key, 0 rows currently
-- Prepared 10 test interaction rows (INT-0001 to INT-0010) aligned with BDAY- contacts for join testing
+- Loaded 10 interaction rows into Platform_Interactions_J via bulk upsert
+- Verified all 10 rows persisted with correct InteractionDate values as real dates
+- Confirmed repeat contacts (BDAY-0001, BDAY-0006) for testing deduplication logic
 
 **Open items**
-- Load 10 rows into Platform_Interactions_J via bulk upsert and verify all rows + date fields
 - Run manual test in Journey Builder with 4 test contacts from John_Mike_Bio_Split_Test
 - Replace sample@example.com addresses in John_Mike_JB_Test with controlled test addresses
 - Publish John_Mike_JB_Test journey after routing confirmed
@@ -64,14 +64,15 @@
 - Platform_Interactions_J test data: 10 rows (INT-0001 to INT-0010) using same BDAY- keys for join alignment
 - Entry source: DEAudience-John_Mike_JB_Test-20261009 from John_Mike_Bio_Split_Test, no schedule
 - Bio_Check condition 1: IsNotNull; condition 2: NotEqual 'No Biography is Available here.'
+- 30-day filter excludes only INT-0008 (2026-08-20); 21-day filter excludes INT-0008 and INT-0004
 
 **Blockers**
 - None
 
 **Next**
-- Proceed with bulk upsert of 10 rows into Platform_Interactions_J
-- Verify all 10 rows loaded and InteractionDate saved as real dates
 - Run manual test in Journey Builder with 4 test contacts from John_Mike_Bio_Split_Test
+- Verify journey entry and routing logic with Platform_Interactions_J join data
+- Replace sample@example.com test addresses before publishing journey
 
 **Checked live on 2026-10-12:** the Salesforce org
 ### Last session — 2026-10-12
@@ -82,14 +83,7 @@
 | Branch | `orchestrate/context` |
 | Session | `130de6ce-20be-4646-896c-78e5de6e72f4` |
 **In its own words (excerpt):**
-I found **Platform_Interactions_J**. It has 4 fields, all required, and no rows at the moment:
-
-- **InteractionID**: Text(50), primary key
-- **SubscriberKey**: Text(50). It isn't a key here, so one contact can have several interactions.
-- **InteractionType**: Text(50), free text
-- **InteractionDate**: Date
-
-**The rows I'd load.** I've used the same BDAY- contacts as your other test data extensions so the joins still line up. Two contacts get two interactions each, so you can test logic that picks the most recent interaction per subscriber. The interaction types are a realistic mix:
+I loaded all 10 sample rows into **Platform_Interactions_J**. It had 0 rows before, and when I read it back it had 10.
 
 | InteractionID | SubscriberKey | InteractionType | InteractionDate |
 |---|---|---|---|
@@ -104,7 +98,8 @@ I found **Platform_Interactions_J**. It has 4 fields, all required, and no rows 
 | INT-0009 | BDAY-0009 | AppLogin | 2026-10-08 |
 | INT-0010 | BDAY-0010 | EmailClick | 2026-10-09 |
 
-BDAY-0004 and BDAY-0008 
+- **The rows match the plan.** InteractionDate was saved as a real date, which Marketing Cloud shows as midnight on each day (for example "10/1/2026 12:00:00 AM").
+- **Correction to what I said in the plan.** I said BDAY-0003 and BDAY-0007 both had dates old enough to fall outside a "last 30 days" filter. That's only true for BDAY-0007 (2026-08-20). BDAY-0003's date, 2026-09-15, was 27 days ago, so it's still inside 30 days. With today's date (2026-10-12), a 30-day filter excludes only INT
 
 _[summary truncated — see the session record for the full text]_
 <!-- orchestrate:session-state:end -->
