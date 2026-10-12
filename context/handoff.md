@@ -42,40 +42,38 @@
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
 ### Engagement state — 2026-10-12
-**Status:** on track — Loyalty_Members_J populated with 10 test rows; all four data extensions aligned and ready for Journey Builder test.
+**Status:** on track — Inactive_Purge_Target_J identified; 10 test rows planned with separate PURGE- keys to avoid collision with loyalty test data
 
 **Done this session**
-- Bulk upsert 10 rows into Loyalty_Members_J (BDAY-0001 to BDAY-0010)
-- Verified all 10 rows landed with correct BirthDate values and OptInStatus booleans
-- Confirmed test cases in place: 6 October birthdays, 4 opted-in October birthdays for filtering
+- Identified Inactive_Purge_Target_J structure: SubscriberKey, Email, DateIdentified (all required, 0 rows)
 
 **Open items**
-- Run manual test in Journey Builder with 4 test contacts from John_Mike_Bio_Split_Test, verify routing matches expected paths
-- Replace four *.sample@example.com test addresses in John_Mike_JB_Test with controlled addresses before publishing
+- Load 10 PURGE- rows into Inactive_Purge_Target_J and verify DateIdentified saved as real dates
+- Run manual test in Journey Builder with 4 test contacts from John_Mike_Bio_Split_Test
+- Replace four *.sample@example.com test addresses in John_Mike_JB_Test with controlled addresses
 - Publish John_Mike_JB_Test journey after test confirms routing
 - Run entry source automation to test actual contact routing through journey
 - Resolve testOrchestrateMap error from previous automation run
-- Make Birthday_Campaign_Target_J sendable (link SubscriberKey to Subscriber Key) if using as journey entry source
+- Make Birthday_Campaign_Target_J sendable if using as journey entry source
 - Make Cart_Abandonment_Target_J sendable if using as journey entry source or send audience
 
 **Decisions**
+- Inactive_Purge_Target_J test data: 10 rows with separate PURGE- keys (PURGE-0001 to PURGE-0010) to isolate from loyalty test contacts
 - Entry source: DEAudience-John_Mike_JB_Test-20261009 from John_Mike_Bio_Split_Test, no schedule
 - Bio_Check condition 1: IsNotNull operator
 - Bio_Check condition 2: NotEqual 'No Biography is Available here.'
-- Test method: manual in Journey Builder UI only (no API endpoint exists)
+- Test method: manual in Journey Builder UI only
 - Test email sending: leave unticked to avoid delivery to sample addresses
 - Campaign_Send_Log_J sample rows: 10 rows with SubscriberKeys BDAY-0001 through BDAY-0010
-- Cart_Abandonment_J test data: 10 rows, whole-dollar amounts only (CartTotal scale is 0, no cents)
-- Cart_Abandonment_Target_J test data: same 10 rows as Cart_Abandonment_J for consistency
+- Cart_Abandonment_J test data: 10 rows, whole-dollar amounts only
 
 **Blockers**
 - None
 
 **Next**
-- Open John_Mike_JB_Test in Journey Builder and run manual test with 4 contacts from John_Mike_Bio_Split_Test
-- Verify routing matches expected paths based on Bio_Check conditions
-- Replace sample@example.com test addresses with controlled addresses
-- Publish journey after test confirms routing
+- Confirm plan to proceed with PURGE- key separation (or redirect to BDAY contacts if join test needed)
+- Bulk upsert 10 rows into Inactive_Purge_Target_J
+- Read back and verify all 10 rows with DateIdentified as real dates
 
 **Checked live on 2026-10-12:** the Salesforce org
 ### Last session — 2026-10-12
@@ -86,23 +84,26 @@
 | Branch | `orchestrate/context` |
 | Session | `130de6ce-20be-4646-896c-78e5de6e72f4` |
 **In its own words (excerpt):**
-**Loyalty_Members_J** now has all 10 sample rows. It had 0 rows before the load, and when I read it back afterwards it had 10.
+I found **Inactive_Purge_Target_J**. It has 3 fields, all required, and 0 rows right now:
 
-| SubscriberKey | EmailAddress | BirthDate | LoyaltyTier | OptInStatus |
-|---|---|---|---|---|
-| BDAY-0001 | ava.sample@example.com | 1990-10-14 | Gold | True |
-| BDAY-0002 | liam.sample@example.com | 1985-10-22 | Silver | True |
-| BDAY-0003 | mia.sample@example.com | 1998-03-05 | Bronze | True |
-| BDAY-0004 | noah.sample@example.com | 1979-10-09 | Platinum | False |
-| BDAY-0005 | zoe.sample@example.com | 1993-07-18 | Gold | True |
-| BDAY-0006 | ethan.sample@example.com | 2001-10-30 | Silver | True |
-| BDAY-0007 | isla.sample@example.com | 1988-12-01 | Bronze | True |
-| BDAY-0008 | lucas.sample@example.com | 1995-10-17 | Platinum | False |
-| BDAY-0009 | ruby.sample@example.com | 1982-05-26 | Gold | True |
-| BDAY-0010 | owen.sample@example.com | 1999-10-03 | Silver | True |
+- **SubscriberKey**: Text(50), primary key
+- **Email**: EmailAddress(254)
+- **DateIdentified**: Date
 
-- **Values match the plan.** BirthDate was saved as a real date, shown as midnight on each day (for example "10/14/1990 12:00:00 AM"). OptInStatus was saved as True/False values.
-- **The test cases are in place.** Six members have October birthdays (BDAY-0001, 0002, 0004, 0006, 0008 and
+**Planned rows.** For this one I've deliberately **not** reused the BDAY-0001 to BDAY-0010 contacts. The name suggests this data extension is the input to a purge, meaning a list of subscribers to delete or unsubscribe. If a purge step ever runs against it, using the same keys would remove the contacts your other four data extensions rely on. Separate PURGE- keys keep the two sets of test data apart:
+
+| SubscriberKey | Email | DateIdentified |
+|---|---|---|
+| PURGE-0001 | grace.inactive@example.com | 2026-09-01 |
+| PURGE-0002 | henry.inactive@example.com | 2026-09-04 |
+| PURGE-0003 | chloe.inactive@example.com | 2026-09-08 |
+| PURGE-0004 | jack.inactive@example.com | 2026-09-12 |
+| PURGE-0005 | ella.inactive@example.com | 2026-09-15 |
+| PURGE-0006 | oscar.inactive@example.com | 2026-09-19 |
+| PURGE-0007 | lily.inactive@example.com | 2026-09-23 |
+| PURGE-0008 | leo.inactive@example.com | 2026-09-28 |
+| PURGE-0009 | amelia.inactive@example.com | 2026-10-02 |
+| PURGE-0010 | max.inactive@example.
 
 _[summary truncated — see the session record for the full text]_
 <!-- orchestrate:session-state:end -->
