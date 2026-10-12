@@ -42,14 +42,16 @@
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
 ### Engagement state — 2026-10-12
-**Status:** on track — Purchases_J loaded: 10 rows verified. OrderAmount scale decision pending. Ready for journey test.
+**Status:** on track — Raw_Transactions_J discovered with 0 rows; 10-row load plan ready. Amount is Text(50); proceeding as-is for staging table.
 
 **Done this session**
-- Loaded 10 rows into Purchases_J via bulk upsert
-- Read back Purchases_J and confirmed all 10 rows persisted with real dates
-- Verified PurchaseIDs, SubscriberKeys, and dates match Purchase_History_J for join alignment
+- Discovered Raw_Transactions_J schema: 5 required fields, TransactionID is primary key
+- Confirmed Amount field is Text(50), not numeric — normal for staging table
+- Prepared 10 test transactions with BDAY- contacts, 2 per-customer samples, 2 rows >30 days old
 
 **Open items**
+- Load 10 rows into Raw_Transactions_J via bulk upsert and verify persistence
+- Confirm TransactionDate saved as real date and Amount values match exactly
 - Decide: keep OrderAmount as Decimal(18,0) or change to Decimal(18,2) in Purchase_History_J
 - Run manual test in Journey Builder with 4 test contacts from John_Mike_Bio_Split_Test
 - Replace sample@example.com addresses in John_Mike_JB_Test with controlled test addresses
@@ -57,23 +59,16 @@
 - Resolve testOrchestrateMap error from previous automation run
 
 **Decisions**
-- Master_Subscribers_J: 10 rows (BDAY-0001 to BDAY-0010) with mixed Status values
-- Inactive_Purge_Target_J: 10 rows with separate PURGE- keys
-- Platform_Interactions_J: 10 rows (INT-0001 to INT-0010) loaded and verified
-- Purchase_History_J: 10 rows (PUR-0001 to PUR-0010) using BDAY- keys for join alignment
-- Purchases_J: 10 rows loaded, reusing same PurchaseIDs and dates as Purchase_History_J
-- Entry source: DEAudience-John_Mike_JB_Test-20261009 from John_Mike_Bio_Split_Test, no schedule
-- Bio_Check condition 1: IsNotNull; condition 2: NotEqual 'No Biography is Available here.'
+- Raw_Transactions_J Amount field remains Text(50) — staging table design confirmed
+- All previous decisions from 2026-10-12 remain in effect
 
 **Blockers**
 - OrderAmount field scale (0) in Purchase_History_J cannot store decimal values — decision pending on schema change
 
 **Next**
-- Decide: keep OrderAmount as Decimal(18,0) or change to Decimal(18,2)
-- Run manual test in Journey Builder with 4 test contacts from John_Mike_Bio_Split_Test
-- Replace sample@example.com addresses in John_Mike_JB_Test with controlled test addresses
-- Publish John_Mike_JB_Test journey after routing confirmed
-- Resolve testOrchestrateMap error from previous automation run
+- Run bulk upsert of 10 rows into Raw_Transactions_J
+- Read back and verify all 10 rows persisted with real dates and exact Amount values
+- Proceed to OrderAmount scale decision for Purchase_History_J
 
 **Checked live on 2026-10-12:** the Salesforce org
 ### Last session — 2026-10-12
@@ -84,27 +79,17 @@
 | Branch | `orchestrate/context` |
 | Session | `130de6ce-20be-4646-896c-78e5de6e72f4` |
 **In its own words (excerpt):**
-**Purchases_J** now has all 10 sample rows. It had 0 rows before the load, and when I read it back it had 10.
+I found **Raw_Transactions_J**. It has 5 fields, all required, and 0 rows right now:
 
-| PurchaseID | SubscriberKey | PurchaseDate |
-|---|---|---|
-| PUR-0001 | BDAY-0001 | 2026-09-20 |
-| PUR-0002 | BDAY-0001 | 2026-10-04 |
-| PUR-0003 | BDAY-0002 | 2026-10-02 |
-| PUR-0004 | BDAY-0003 | 2026-08-28 |
-| PUR-0005 | BDAY-0005 | 2026-10-05 |
-| PUR-0006 | BDAY-0005 | 2026-10-10 |
-| PUR-0007 | BDAY-0006 | 2026-10-07 |
-| PUR-0008 | BDAY-0007 | 2026-07-15 |
-| PUR-0009 | BDAY-0009 | 2026-10-08 |
-| PUR-0010 | BDAY-0010 | 2026-10-11 |
+- **TransactionID**: Text(50), primary key
+- **CustomerID**: Text(50). It isn't a key here, so one customer can have several transactions.
+- **StoreLocation**: Text(50)
+- **Amount**: **Text(50)**. It's not a number field.
+- **TransactionDate**: Date
 
-- **Every row matches the plan.** PurchaseDate was saved as a real date. Marketing Cloud shows each one as midnight on that day, for example "9/20/2026 12:00:00 AM".
-- **The rows line up with Purchase_History_J.** Both data extensions have the same PurchaseIDs, contacts and dates, so you can join them on PurchaseID to bring in OrderAmount.
-- **The date filter has rows to exclude.** A "purchased in the last 30 days" filter (2026-09-12 onward) leaves out PUR-0004 and PUR-0008.
-- **No email was sent.** This only wrote data.
+**About Amount being Text.** Because it's text, values with cents like "49.99" will save exactly as written. The downside is that Marketing Cloud treats them as text. To sort, total or compare by value (for example `Amount > 100`), a SQL query has to `CAST` the field to a number first. If you named it "Raw" because it's a staging table that a query cleans up later, that's a normal setup and you don't need to change anything. I've written every amount as a plain number with two decimal places and no currency symbol, so it converts cleanly.
 
-**Test data status:** Birthday_Campaign_Target_J, Campaign_Send_Log_J, Cart_Abandonment_J, Loyalty_Members_J, Inactive_P
+**The rows I plan to load.** CustomerID uses the same BDAY- contacts as your other test data extensions, so joins on SubscriberKey still line up. BDAY-0002 and BDAY-0006 each have two transactions, which lets you test totals and "latest transaction" logic for a customer. I left out the unsubscribed contacts, BDAY-00
 
 _[summary truncated — see the session record for the full text]_
 <!-- orchestrate:session-state:end -->
