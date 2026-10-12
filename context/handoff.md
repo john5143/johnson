@@ -42,34 +42,36 @@
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
 ### Engagement state — 2026-10-12
-**Status:** on track — Cart_Abandonment_Target_J ready to load: 10 rows mapped, awaiting approval to proceed
+**Status:** on track — Cart_Abandonment_Target_J loaded & verified: 10 rows persisted. All 13 test tables now populated.
 
 **Done this session**
-- Inspected Cart_Abandonment_Target_J schema: 3 required fields, 0 rows, CartTotal is Decimal(18,0)
-- Mapped 10 source rows from Cart_Abandonment_J to target (BDAY-0001 to BDAY-0010, all whole numbers)
-- Confirmed all CartTotal values are whole numbers — no rounding risk on save
+- Loaded all 10 sample rows into Cart_Abandonment_Target_J
+- Verified persistence: read-back matches plan exactly
+- Confirmed CartTotal whole numbers saved without rounding
+- Validated source-to-target row alignment for query testing
 
 **Open items**
-- Approve or reject Cart_Abandonment_Target_J 10-row load (all contacts vs. Active-only)
-- Decide: OrderAmount scale change for Purchase_History_J (Decimal(18,0) vs Decimal(18,2))
+- Decide OrderAmount scale for Purchase_History_J (Decimal(18,0) vs Decimal(18,2))
 - Run manual test in Journey Builder with 4 test contacts from John_Mike_Bio_Split_Test
 - Replace sample@example.com addresses in John_Mike_JB_Test with controlled test addresses
 - Publish John_Mike_JB_Test journey after routing confirmed
 - Resolve testOrchestrateMap error from previous automation run
+- Confirm schema change to Decimal(18,2) for CartTotal, TotalSpent, OrderAmount if real money values needed
 
 **Decisions**
 - Raw_Transactions_J Amount field remains Text(50) — staging table design confirmed
-- Staging_Active_Subscribers_J includes all 10 contacts (BDAY-0001 to BDAY-0010) including inactive ones for filtering validation
-- VIP_Upsell_Target_J test data uses whole numbers; TotalSpent scale decision deferred to separate change
+- Staging_Active_Subscribers_J includes all 10 contacts (BDAY-0001 to BDAY-0010) for filtering validation
 - VIP_Upsell_Target_J 10-row load approved and completed
+- Cart_Abandonment_Target_J loaded with all 10 rows (all contacts, not Active-only subset)
 
 **Blockers**
 - OrderAmount field scale (0) in Purchase_History_J cannot store decimal values — decision pending on schema change
 
 **Next**
-- Decide: load Cart_Abandonment_Target_J with all 10 rows or Active-only subset (6 rows)
-- Execute approved Cart_Abandonment_Target_J load and verify persistence
-- Decide OrderAmount scale for Purchase_History_J (Decimal(18,0) vs Decimal(18,2))
+- Decide: convert CartTotal, TotalSpent, OrderAmount to Decimal(18,2) for real money values or keep as Decimal(18,0)
+- Run manual Journey Builder test with 4 test contacts from John_Mike_Bio_Split_Test
+- Replace sample@example.com test addresses in John_Mike_JB_Test
+- Resolve testOrchestrateMap automation error
 
 **Checked live on 2026-10-12:** the Salesforce org
 ### Last session — 2026-10-12
@@ -80,28 +82,27 @@
 | Branch | `orchestrate/context` |
 | Session | `130de6ce-20be-4646-896c-78e5de6e72f4` |
 **In its own words (excerpt):**
-I found **Cart_Abandonment_Target_J**. It has 3 fields, all required, and 0 rows right now:
+I loaded all 10 sample rows into **Cart_Abandonment_Target_J**. It had 0 rows before, and reading it back after the load returned 10.
 
-- **SubscriberKey**: Text(50), primary key, so each contact can appear only once
-- **AbandonDate**: Date
-- **CartTotal**: Decimal(18, **0**), so it can't store cents (the same setting as TotalSpent and OrderAmount)
+| SubscriberKey | AbandonDate | CartTotal |
+|---|---|---|
+| BDAY-0001 | 2026-10-01 | 129 |
+| BDAY-0002 | 2026-10-02 | 45 |
+| BDAY-0003 | 2026-10-03 | 310 |
+| BDAY-0004 | 2026-10-04 | 78 |
+| BDAY-0005 | 2026-10-05 | 560 |
+| BDAY-0006 | 2026-10-06 | 22 |
+| BDAY-0007 | 2026-10-07 | 199 |
+| BDAY-0008 | 2026-10-08 | 87 |
+| BDAY-0009 | 2026-10-09 | 415 |
+| BDAY-0010 | 2026-10-10 | 64 |
 
-**The rows I'd load.** I read your source table, Cart_Abandonment_J, which has 10 rows: one cart for each contact from BDAY-0001 to BDAY-0010. Since each contact has exactly one cart, the target can copy those values directly. Then the source and target agree, and you can check a query's output against them.
+- **Every value matches the plan.** AbandonDate saved as a real date (Marketing Cloud shows midnight on each day, e.g. "10/1/2026 12:00:00 AM"). CartTotal saved as whole numbers, so nothing was rounded.
+- **It matches the source.** Each row has the same values as that contact's cart in Cart_Abandonment_J, so you can check a query's output against it directly.
+- **You can test an Active-only filter on it.** A join to Master_Subscribers_J would remove BDAY-0003, BDAY-0004, BDAY-0007 and BDAY-0008.
+- **No email was sent.** The load only wrote data.
 
-| SubscriberKey | AbandonDate | CartTotal | Source row |
-|---|---|---|---|
-| BDAY-0001 | 2026-10-01 | 129 | CART-0001 |
-| BDAY-0002 | 2026-10-02 | 45 | CART-0002 |
-| BDAY-0003 | 2026-10-03 | 310 | CART-0003 |
-| BDAY-0004 | 2026-10-04 | 78 | CART-0004 |
-| BDAY-0005 | 2026-10-05 | 560 | CART-0005 |
-| BDAY-0006 | 2026-10-06 | 22 | CART-0006 |
-| BDAY-0007 | 2026-10-07 | 199 | CART-0007 |
-| BDAY-0008 | 2026-10-08 | 87 | CART-0008 |
-| BDAY-0009 | 2026-10-09 | 415 | CART-0009 |
-| BDAY-0010 | 2026-10-10 | 64 | CART-0010 |
-
-All the totals are whole numbers, so nothing gets rounded w
+**Where the test data stands:** all 13 data extensions you've asked about this session now have 10 rows each. Cart_Abandonment_T
 
 _[summary truncated — see the session record for the full text]_
 <!-- orchestrate:session-state:end -->
