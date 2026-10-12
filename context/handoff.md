@@ -42,16 +42,15 @@
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
 ### Engagement state — 2026-10-12
-**Status:** on track — Raw_Transactions_J discovered with 0 rows; 10-row load plan ready. Amount is Text(50); proceeding as-is for staging table.
+**Status:** on track — Raw_Transactions_J loaded & verified: 10 rows persisted with exact amounts & real dates. OrderAmount scale decision pending.
 
 **Done this session**
-- Discovered Raw_Transactions_J schema: 5 required fields, TransactionID is primary key
-- Confirmed Amount field is Text(50), not numeric — normal for staging table
-- Prepared 10 test transactions with BDAY- contacts, 2 per-customer samples, 2 rows >30 days old
+- Bulk upsert of 10 test rows into Raw_Transactions_J completed
+- Verified all 10 rows persisted with exact Amount values and real TransactionDate
+- Confirmed 30-day date window filtering works (excludes TXN-0004, TXN-0008)
+- Validated multi-transaction customer logic (BDAY-0002, BDAY-0006 totals require CAST)
 
 **Open items**
-- Load 10 rows into Raw_Transactions_J via bulk upsert and verify persistence
-- Confirm TransactionDate saved as real date and Amount values match exactly
 - Decide: keep OrderAmount as Decimal(18,0) or change to Decimal(18,2) in Purchase_History_J
 - Run manual test in Journey Builder with 4 test contacts from John_Mike_Bio_Split_Test
 - Replace sample@example.com addresses in John_Mike_JB_Test with controlled test addresses
@@ -66,9 +65,10 @@
 - OrderAmount field scale (0) in Purchase_History_J cannot store decimal values — decision pending on schema change
 
 **Next**
-- Run bulk upsert of 10 rows into Raw_Transactions_J
-- Read back and verify all 10 rows persisted with real dates and exact Amount values
-- Proceed to OrderAmount scale decision for Purchase_History_J
+- Decide OrderAmount scale change for Purchase_History_J (Decimal(18,0) vs Decimal(18,2))
+- Proceed to Journey Builder manual test with John_Mike_Bio_Split_Test contacts
+- Replace sample@example.com test addresses in John_Mike_JB_Test
+- Resolve testOrchestrateMap automation error
 
 **Checked live on 2026-10-12:** the Salesforce org
 ### Last session — 2026-10-12
@@ -79,17 +79,24 @@
 | Branch | `orchestrate/context` |
 | Session | `130de6ce-20be-4646-896c-78e5de6e72f4` |
 **In its own words (excerpt):**
-I found **Raw_Transactions_J**. It has 5 fields, all required, and 0 rows right now:
+**Raw_Transactions_J** now has all 10 sample rows. It had 0 rows before the load, and when I read it back it had 10.
 
-- **TransactionID**: Text(50), primary key
-- **CustomerID**: Text(50). It isn't a key here, so one customer can have several transactions.
-- **StoreLocation**: Text(50)
-- **Amount**: **Text(50)**. It's not a number field.
-- **TransactionDate**: Date
+| TransactionID | CustomerID | StoreLocation | Amount | TransactionDate |
+|---|---|---|---|---|
+| TXN-0001 | BDAY-0001 | Online | 49.99 | 2026-10-01 |
+| TXN-0002 | BDAY-0002 | Downtown | 125.50 | 2026-09-22 |
+| TXN-0003 | BDAY-0002 | Online | 18.75 | 2026-10-07 |
+| TXN-0004 | BDAY-0003 | Northgate Mall | 240.00 | 2026-08-30 |
+| TXN-0005 | BDAY-0005 | Airport | 12.40 | 2026-10-03 |
+| TXN-0006 | BDAY-0006 | Downtown | 89.95 | 2026-10-05 |
+| TXN-0007 | BDAY-0006 | Westfield | 310.20 | 2026-10-09 |
+| TXN-0008 | BDAY-0007 | Northgate Mall | 64.00 | 2026-07-18 |
+| TXN-0009 | BDAY-0009 | Online | 499.99 | 2026-10-10 |
+| TXN-0010 | BDAY-0010 | Westfield | 35.25 | 2026-10-11 |
 
-**About Amount being Text.** Because it's text, values with cents like "49.99" will save exactly as written. The downside is that Marketing Cloud treats them as text. To sort, total or compare by value (for example `Amount > 100`), a SQL query has to `CAST` the field to a number first. If you named it "Raw" because it's a staging table that a query cleans up later, that's a normal setup and you don't need to change anything. I've written every amount as a plain number with two decimal places and no currency symbol, so it converts cleanly.
-
-**The rows I plan to load.** CustomerID uses the same BDAY- contacts as your other test data extensions, so joins on SubscriberKey still line up. BDAY-0002 and BDAY-0006 each have two transactions, which lets you test totals and "latest transaction" logic for a customer. I left out the unsubscribed contacts, BDAY-00
+- **Every value matches the plan.** Amount saved exactly as written, including the trailing zeros like "125.50" and "240.00", because the field is text. TransactionDate saved as a real date, which Marketing Cloud shows as midnight on each day.
+- **Testing the date window:** a "last 30 days" filter (from 2026-09-12) leaves out TXN-0004 and TXN-0008.
+- **Customers with more than one transaction:** BDAY-
 
 _[summary truncated — see the session record for the full text]_
 <!-- orchestrate:session-state:end -->
