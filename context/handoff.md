@@ -42,19 +42,20 @@
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
 ### Engagement state — 2026-10-12
-**Status:** on track — John_Mike_JB_Test ready for manual test; Birthday_Campaign_Target_J populated with 10 sample rows
+**Status:** on track — Campaign_Send_Log_J discovered and ready for sample data load; Birthday_Campaign_Target_J populated
 
 **Done this session**
-- Loaded 10 sample rows into Birthday_Campaign_Target_J data extension
-- Verified all rows match planned values: SubscriberKey, EmailAddress, LoyaltyTier, CouponCode
+- Found Campaign_Send_Log_J with 4 required fields (LogID, SubscriberKey, EmailName, SendDate); 0 rows currently
+- Planned 10 sample log rows matching SubscriberKeys in Birthday_Campaign_Target_J for join testing
 
 **Open items**
+- Load 10 sample rows into Campaign_Send_Log_J via bulk upsert and verify all rows landed with correct dates
 - Run manual test in Journey Builder with 4 test contacts from John_Mike_Bio_Split_Test, verify routing matches expected paths
 - Replace four *.sample@example.com test addresses in John_Mike_JB_Test with controlled addresses before publishing
 - Publish John_Mike_JB_Test journey after test confirms routing
 - Run entry source automation to test actual contact routing through journey
 - Resolve testOrchestrateMap error from previous automation run
-- Make Birthday_Campaign_Target_J sendable (link SubscriberKey to Subscriber Key) if using as journey entry source or send audience
+- Make Birthday_Campaign_Target_J sendable (link SubscriberKey to Subscriber Key) if using as journey entry source
 
 **Decisions**
 - Entry source: DEAudience-John_Mike_JB_Test-20261009 from John_Mike_Bio_Split_Test, no schedule
@@ -62,15 +63,15 @@
 - Bio_Check condition 2: NotEqual 'No Biography is Available here.'
 - Test method: manual in Journey Builder UI only (no API endpoint exists)
 - Test email sending: leave unticked to avoid delivery to sample addresses
+- Campaign_Send_Log_J sample rows: 10 rows with SubscriberKeys BDAY-0001 through BDAY-0010, matching Birthday_Campaign_Target_J
 
 **Blockers**
 - None
 
 **Next**
-- Open John_Mike_JB_Test in Journey Builder and select Test button
-- Run manual test with all 4 contacts from John_Mike_Bio_Split_Test, verify routing (JMC-0001, JMC-0002 → Has Bio; JMC-0003, JMC-0005 → Remainder)
-- Replace sample@example.com addresses in John_Mike_JB_Test with controlled test addresses
-- Publish journey after test confirms expected routing
+- Proceed with bulk upsert of 10 rows into Campaign_Send_Log_J
+- Read Campaign_Send_Log_J back to verify all 10 rows landed with correct dates
+- Open John_Mike_JB_Test in Journey Builder and run manual test with 4 contacts from John_Mike_Bio_Split_Test
 
 **Checked live on 2026-10-12:** the Salesforce org
 ### Last session — 2026-10-12
@@ -81,23 +82,29 @@
 | Branch | `orchestrate/context` |
 | Session | `130de6ce-20be-4646-896c-78e5de6e72f4` |
 **In its own words (excerpt):**
-All 10 sample rows are now in **Birthday_Campaign_Target_J**. I read the data extension back afterwards to check: it had 0 rows before and now has 10.
+I found **Campaign_Send_Log_J**. It has 4 fields, all required, and currently 0 rows:
 
-| SubscriberKey | EmailAddress | LoyaltyTier | CouponCode |
+- **LogID**: Text(50), primary key
+- **SubscriberKey**: Text(50)
+- **EmailName**: Text(50)
+- **SendDate**: Date
+
+**Planned rows.** The SubscriberKeys match the 10 contacts already in Birthday_Campaign_Target_J, so the two data extensions join up for testing:
+
+| LogID | SubscriberKey | EmailName | SendDate |
 |---|---|---|---|
-| BDAY-0001 | ava.sample@example.com | Gold | BDAY-GOLD-7Q2K |
-| BDAY-0002 | liam.sample@example.com | Silver | BDAY-SILV-3M8T |
-| BDAY-0003 | mia.sample@example.com | Bronze | BDAY-BRNZ-9X4D |
-| BDAY-0004 | noah.sample@example.com | Platinum | BDAY-PLAT-2H6R |
-| BDAY-0005 | zoe.sample@example.com | Gold | BDAY-GOLD-5V1N |
-| BDAY-0006 | ethan.sample@example.com | Silver | BDAY-SILV-8C3W |
-| BDAY-0007 | isla.sample@example.com | Bronze | BDAY-BRNZ-4J7P |
-| BDAY-0008 | lucas.sample@example.com | Platinum | BDAY-PLAT-6F9L |
-| BDAY-0009 | ruby.sample@example.com | Gold | BDAY-GOLD-1T5B |
-| BDAY-0010 | owen.sample@example.com | Silver | BDAY-SILV-0K2Z |
+| LOG-0001 | BDAY-0001 | Birthday_Greeting_Gold | 2026-10-01 |
+| LOG-0002 | BDAY-0002 | Birthday_Greeting_Silver | 2026-10-02 |
+| LOG-0003 | BDAY-0003 | Birthday_Greeting_Bronze | 2026-10-03 |
+| LOG-0004 | BDAY-0004 | Birthday_Greeting_Platinum | 2026-10-04 |
+| LOG-0005 | BDAY-0005 | Birthday_Greeting_Gold | 2026-10-05 |
+| LOG-0006 | BDAY-0006 | Birthday_Greeting_Silver | 2026-10-06 |
+| LOG-0007 | BDAY-0007 | Birthday_Greeting_Bronze | 2026-10-07 |
+| LOG-0008 | BDAY-0008 | Birthday_Greeting_Platinum | 2026-10-08 |
+| LOG-0009 | BDAY-0009 | Birthday_Coupon_Reminder | 2026-10-09 |
+| LOG-0010 | BDAY-0010 | Birthday_Coupon_Reminder | 2026-10-10 |
 
-- **Values:** each row has exactly the values from the plan, matched to the four fields: SubscriberKey (the primary key), EmailAddress, LoyaltyTier and CouponCode.
-- **Can't be sent to as it is:** the data extension isn't set up for sending, and every address uses the reserved example.com domain, which can't re
+**Tool call:** one bulk upsert of these 10 rows into Campaign_Send_Log_J. I'll read the data extension back afterwards to check that al
 
 _[summary truncated — see the session record for the full text]_
 <!-- orchestrate:session-state:end -->
