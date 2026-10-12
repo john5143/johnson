@@ -42,35 +42,33 @@
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
 ### Engagement state — 2026-10-12
-**Status:** on track — Staging_Active_Subscribers_J loaded with 10 test rows verified. OrderAmount scale decision & Journey Builder manual test remain open.
+**Status:** on track — VIP_Upsell_Target_J schema confirmed; 10 test rows ready to load pending approval
 
 **Done this session**
-- Loaded all 10 rows into Staging_Active_Subscribers_J (BDAY-0001 to BDAY-0010)
-- Verified all rows persisted with correct LastInteractionDate values
-- Confirmed dates match Platform_Interactions_J for 8 contacts with interactions
-- Validated filtering logic: 30-day filter removes 3 rows, Active join removes 4 rows
+- Verified VIP_Upsell_Target_J structure: SubscriberKey (PK), TotalSpent Decimal(18,0), PrimaryStore Text(50)
+- Prepared 10 test rows (BDAY-0001 to BDAY-0010) with VIP-level spend amounts and store names
 
 **Open items**
 - Decide: OrderAmount scale change for Purchase_History_J (Decimal(18,0) vs Decimal(18,2))
+- Approve and load 10 rows into VIP_Upsell_Target_J, then verify persistence
 - Run manual test in Journey Builder with 4 test contacts from John_Mike_Bio_Split_Test
 - Replace sample@example.com addresses in John_Mike_JB_Test with controlled test addresses
 - Publish John_Mike_JB_Test journey after routing confirmed
 - Resolve testOrchestrateMap error from previous automation run
-- Load Cart_Abandonment_Target_J (previously cancelled — confirm if proceeding)
+- Confirm: load Cart_Abandonment_Target_J or keep cancelled
 
 **Decisions**
 - Raw_Transactions_J Amount field remains Text(50) — staging table design confirmed
 - Staging_Active_Subscribers_J includes all 10 contacts (BDAY-0001 to BDAY-0010) including inactive ones for filtering validation
-- All previous decisions from 2026-10-12 remain in effect
+- VIP_Upsell_Target_J test data uses whole numbers; TotalSpent scale decision deferred to separate change
 
 **Blockers**
 - OrderAmount field scale (0) in Purchase_History_J cannot store decimal values — decision pending on schema change
 
 **Next**
+- Approve load of 10 rows into VIP_Upsell_Target_J
+- Verify all 10 rows persisted with correct TotalSpent and PrimaryStore values
 - Decide OrderAmount scale change for Purchase_History_J
-- Run manual test in Journey Builder with John_Mike_Bio_Split_Test contacts
-- Replace sample@example.com addresses in John_Mike_JB_Test
-- Publish John_Mike_JB_Test journey
 
 **Checked live on 2026-10-12:** the Salesforce org
 ### Last session — 2026-10-12
@@ -81,29 +79,23 @@
 | Branch | `orchestrate/context` |
 | Session | `130de6ce-20be-4646-896c-78e5de6e72f4` |
 **In its own words (excerpt):**
-I loaded all 10 sample rows into **Staging_Active_Subscribers_J**. It had 0 rows before, and when I read it back it had 10.
+I found **VIP_Upsell_Target_J**. It has 3 fields, all required, and no rows yet:
 
-| SubscriberKey | LastInteractionDate |
-|---|---|
-| BDAY-0001 | 2026-10-02 |
-| BDAY-0002 | 2026-10-03 |
-| BDAY-0003 | 2026-09-15 |
-| BDAY-0004 | 2026-06-30 |
-| BDAY-0005 | 2026-10-05 |
-| BDAY-0006 | 2026-10-06 |
-| BDAY-0007 | 2026-08-20 |
-| BDAY-0008 | 2026-05-14 |
-| BDAY-0009 | 2026-10-08 |
-| BDAY-0010 | 2026-10-09 |
+- **SubscriberKey**: Text(50), primary key, so each contact can appear only once
+- **TotalSpent**: Decimal(18, **0**)
+- **PrimaryStore**: Text(50)
 
-- **All 10 rows match the plan.** LastInteractionDate was saved as a real date. Marketing Cloud shows each one as midnight on that day, for example "10/2/2026 12:00:00 AM".
-- **The dates agree with Platform_Interactions_J.** For the 8 contacts that have interactions, the date here is their latest interaction date there.
-- **Two filters you can test:**
-  - A "last 30 days" filter (2026-09-12 onward) removes BDAY-0004, BDAY-0007 and BDAY-0008.
-  - A filter that keeps only Active subscribers, by joining to Master_Subscribers_J, removes BDAY-0003, BDAY-0004, BDAY-0007 and BDAY-0008.
-- **No email was sent.** I only wrote rows to this data extension.
+**TotalSpent has a scale of 0, so it can't store cents.** OrderAmount in Purchase_History_J has the same setting. I've used whole numbers below so nothing gets rounded when it saves. If you want this field to hold real money values, I can change it to Decimal(18,2) as a separate change, after you confirm.
 
-**Test data so far:** 11 data extensions now have 10 rows each: Birthday_Campaign_Target_J, Campaign
+**The 10 rows I'd load.** The primary key means I need 10 different contacts, so I've used BDAY-0001 to BDAY-0010 to keep the joins with your other test data working. The store names match the ones in Raw_Transactions_J. The totals are made up at VIP-level amounts. They don't add up from Raw_Transactions_J, because those amounts are too small to look like VIP spend. Two contacts are under 1,000, so a spend-threshold filter has rows to drop.
+
+| SubscriberKey | TotalSpent | PrimaryStore |
+|---|---|---|
+| BDAY-0001 | 1250 | Online |
+| BDAY-0002 | 2480 | Downtown |
+| BDAY-0003 | 980 | Northgate Mall |
+| BDAY-0004 | 1520 | Downtown |
+| BDAY-0005 | 3200 | Airp
 
 _[summary truncated — see the session record for the full text]_
 <!-- orchestrate:session-state:end -->
