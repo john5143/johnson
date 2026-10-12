@@ -42,13 +42,15 @@
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
 ### Engagement state — 2026-10-12
-**Status:** on track — Campaign_Send_Log_J loaded with 10 test rows; ready for Journey Builder manual test
+**Status:** on track — Cart_Abandonment_J discovered & ready for load; 10 test rows planned, SubscriberKeys match existing contacts
 
 **Done this session**
-- Bulk upsert of 10 sample rows into Campaign_Send_Log_J completed
-- Verified all 10 rows landed with correct dates and SubscriberKey matches
+- Located Cart_Abandonment_J in Salesforce org
+- Verified schema: CartID (PK), SubscriberKey, AbandonDate, CartTotal (Decimal, scale 0)
+- Planned 10 test rows with whole-dollar amounts, all SubscriberKeys match Birthday_Campaign_Target_J & Campaign_Send_Log_J
 
 **Open items**
+- Bulk upsert 10 rows into Cart_Abandonment_J and verify all landed with correct dates and totals
 - Run manual test in Journey Builder with 4 test contacts from John_Mike_Bio_Split_Test, verify routing matches expected paths
 - Replace four *.sample@example.com test addresses in John_Mike_JB_Test with controlled addresses before publishing
 - Publish John_Mike_JB_Test journey after test confirms routing
@@ -62,15 +64,16 @@
 - Bio_Check condition 2: NotEqual 'No Biography is Available here.'
 - Test method: manual in Journey Builder UI only (no API endpoint exists)
 - Test email sending: leave unticked to avoid delivery to sample addresses
-- Campaign_Send_Log_J sample rows: 10 rows with SubscriberKeys BDAY-0001 through BDAY-0010, matching Birthday_Campaign_Target_J
+- Campaign_Send_Log_J sample rows: 10 rows with SubscriberKeys BDAY-0001 through BDAY-0010
+- Cart_Abandonment_J test data: 10 rows, whole-dollar amounts only (CartTotal scale is 0, no cents)
 
 **Blockers**
 - None
 
 **Next**
+- Proceed with bulk upsert of 10 Cart_Abandonment_J rows (CART-0001 through CART-0010)
+- Read Cart_Abandonment_J back to verify all 10 rows landed with real Date values and whole-number totals
 - Open John_Mike_JB_Test in Journey Builder and run manual test with 4 contacts from John_Mike_Bio_Split_Test
-- Verify routing matches expected paths based on Bio_Check conditions
-- Replace test email addresses before publishing journey
 
 **Checked live on 2026-10-12:** the Salesforce org
 ### Last session — 2026-10-12
@@ -81,23 +84,31 @@
 | Branch | `orchestrate/context` |
 | Session | `130de6ce-20be-4646-896c-78e5de6e72f4` |
 **In its own words (excerpt):**
-All 10 sample rows are now in **Campaign_Send_Log_J**. I read the data extension back afterwards: it had 0 rows before and now has 10.
+I found **Cart_Abandonment_J**. It has 4 fields, all required, and currently 0 rows:
 
-| LogID | SubscriberKey | EmailName | SendDate |
+- **CartID**: Text(50), primary key
+- **SubscriberKey**: Text(50)
+- **AbandonDate**: Date
+- **CartTotal**: Decimal, with **scale 0**
+
+**About CartTotal:** it's set up with no decimal places, so it can't hold cents. A value like 129.99 would be rounded or rejected. I've used whole-dollar amounts below. If you need cents, the field's scale has to be changed to 2 first. That's a separate change and I'd ask you before making it.
+
+**Planned rows.** The SubscriberKeys match the contacts already in Birthday_Campaign_Target_J and Campaign_Send_Log_J, so all three data extensions join up:
+
+| CartID | SubscriberKey | AbandonDate | CartTotal |
 |---|---|---|---|
-| LOG-0001 | BDAY-0001 | Birthday_Greeting_Gold | 2026-10-01 |
-| LOG-0002 | BDAY-0002 | Birthday_Greeting_Silver | 2026-10-02 |
-| LOG-0003 | BDAY-0003 | Birthday_Greeting_Bronze | 2026-10-03 |
-| LOG-0004 | BDAY-0004 | Birthday_Greeting_Platinum | 2026-10-04 |
-| LOG-0005 | BDAY-0005 | Birthday_Greeting_Gold | 2026-10-05 |
-| LOG-0006 | BDAY-0006 | Birthday_Greeting_Silver | 2026-10-06 |
-| LOG-0007 | BDAY-0007 | Birthday_Greeting_Bronze | 2026-10-07 |
-| LOG-0008 | BDAY-0008 | Birthday_Greeting_Platinum | 2026-10-08 |
-| LOG-0009 | BDAY-0009 | Birthday_Coupon_Reminder | 2026-10-09 |
-| LOG-0010 | BDAY-0010 | Birthday_Coupon_Reminder | 2026-10-10 |
+| CART-0001 | BDAY-0001 | 2026-10-01 | 129 |
+| CART-0002 | BDAY-0002 | 2026-10-02 | 45 |
+| CART-0003 | BDAY-0003 | 2026-10-03 | 310 |
+| CART-0004 | BDAY-0004 | 2026-10-04 | 78 |
+| CART-0005 | BDAY-0005 | 2026-10-05 | 560 |
+| CART-0006 | BDAY-0006 | 2026-10-06 | 22 |
+| CART-0007 | BDAY-0007 | 2026-10-07 | 199 |
+| CART-0008 | BDAY-0008 | 2026-10-08 | 87 |
+| CART-0009 | BDAY-0009 | 2026-10-09 | 415 |
+| CART-0010 | BDAY-0010 | 2026-10-10 | 64 |
 
-- **Values match the plan.** Each row has the values I proposed. SendDate was stored as a real date: Marketing Cloud shows it as midnight on each day (for example "10/1/2026 12:00:00 AM"), not as text.
-- **The two data extensions join up.** Each SubscriberKey matches a contact already in Birthday_Campaign_Target_J, so you can test SQL joins or 
+**Tool ca
 
 _[summary truncated — see the session record for the full text]_
 <!-- orchestrate:session-state:end -->
