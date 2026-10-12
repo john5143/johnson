@@ -42,17 +42,16 @@
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
 ### Engagement state — 2026-10-12
-**Status:** on track — Purchase_History_J schema reviewed; 10 test rows ready to load. OrderAmount scale (0) flagged for confirmation.
+**Status:** on track — Purchase_History_J loaded with 10 rows; OrderAmount scale (0) remains unfixed but whole-number test data persisted correctly.
 
 **Done this session**
-- Reviewed Purchase_History_J schema: 4 required fields, 0 rows
-- Identified OrderAmount Decimal(18,0) scale limitation — cannot store cents
-- Planned 10 purchase rows aligned with existing BDAY- contacts for join testing
+- Loaded 10 purchase rows into Purchase_History_J (PUR-0001 to PUR-0010)
+- Verified all 10 rows persisted with correct PurchaseDate as real dates
+- Confirmed date-window logic: 30-day filter excludes only PUR-0004 and PUR-0008
+- Validated multi-purchase contacts: BDAY-0001 (2 purchases, total 165) and BDAY-0005 (2 purchases, total 385)
 
 **Open items**
-- Confirm whether OrderAmount scale should be changed to Decimal(18,2) before load
-- Load 10 rows into Purchase_History_J via bulk upsert (pending schema confirmation)
-- Verify all 10 rows persisted with correct PurchaseDate as real dates
+- Confirm whether OrderAmount scale should be changed to Decimal(18,2) before further use
 - Run manual test in Journey Builder with 4 test contacts from John_Mike_Bio_Split_Test
 - Replace sample@example.com addresses in John_Mike_JB_Test with controlled test addresses
 - Publish John_Mike_JB_Test journey after routing confirmed
@@ -62,17 +61,17 @@
 - Master_Subscribers_J: 10 rows (BDAY-0001 to BDAY-0010) with mixed Status values
 - Inactive_Purge_Target_J: 10 rows with separate PURGE- keys
 - Platform_Interactions_J: 10 rows (INT-0001 to INT-0010) loaded and verified
-- Purchase_History_J test data: 10 rows (PUR-0001 to PUR-0010) using same BDAY- keys for join alignment
+- Purchase_History_J: 10 rows (PUR-0001 to PUR-0010) using BDAY- keys for join alignment
 - Entry source: DEAudience-John_Mike_JB_Test-20261009 from John_Mike_Bio_Split_Test, no schedule
 - Bio_Check condition 1: IsNotNull; condition 2: NotEqual 'No Biography is Available here.'
 
 **Blockers**
-- OrderAmount field scale (0) cannot store decimal values — confirm fix before loading Purchase_History_J
+- OrderAmount field scale (0) cannot store decimal values — decision pending on whether to change to Decimal(18,2)
 
 **Next**
-- Confirm OrderAmount schema change to Decimal(18,2) or proceed with whole-number amounts only
-- Load 10 purchase rows into Purchase_History_J and verify persistence and date formatting
+- Decide: keep OrderAmount as Decimal(18,0) for whole numbers only, or change schema to Decimal(18,2)
 - Run manual journey test with 4 contacts from John_Mike_Bio_Split_Test
+- Update test email addresses in John_Mike_JB_Test and publish journey
 
 **Checked live on 2026-10-12:** the Salesforce org
 ### Last session — 2026-10-12
@@ -83,18 +82,24 @@
 | Branch | `orchestrate/context` |
 | Session | `130de6ce-20be-4646-896c-78e5de6e72f4` |
 **In its own words (excerpt):**
-I found **Purchase_History_J**. It has 4 fields, all required, and 0 rows right now:
+**Purchase_History_J** now has all 10 sample rows. It had 0 rows before the load, and when I read it back it had 10.
 
-- **PurchaseID**: Text(50), primary key
-- **SubscriberKey**: Text(50). It isn't a key here, so one contact can have several purchases.
-- **PurchaseDate**: Date
-- **OrderAmount**: Decimal(18, **0**)
+| PurchaseID | SubscriberKey | PurchaseDate | OrderAmount |
+|---|---|---|---|
+| PUR-0001 | BDAY-0001 | 2026-09-20 | 120 |
+| PUR-0002 | BDAY-0001 | 2026-10-04 | 45 |
+| PUR-0003 | BDAY-0002 | 2026-10-02 | 89 |
+| PUR-0004 | BDAY-0003 | 2026-08-28 | 230 |
+| PUR-0005 | BDAY-0005 | 2026-10-05 | 310 |
+| PUR-0006 | BDAY-0005 | 2026-10-10 | 75 |
+| PUR-0007 | BDAY-0006 | 2026-10-07 | 60 |
+| PUR-0008 | BDAY-0007 | 2026-07-15 | 150 |
+| PUR-0009 | BDAY-0009 | 2026-10-08 | 499 |
+| PUR-0010 | BDAY-0010 | 2026-10-11 | 35 |
 
-**Something to check before loading: OrderAmount has a scale of 0.** That means it can't store cents. A value like 49.99 would be saved as 50 or 49, or might be rejected. I've used whole-number amounts below so nothing gets changed on the way in. If this field is meant to hold real prices, it probably needs a scale of 2, for example Decimal(18,2). Tell me if you'd like that fixed first. It's a schema change that can't be automatically undone, so I'd confirm it with you separately.
-
-**Planned rows.** These use the same BDAY- contacts as your other test data extensions, so the joins still line up. BDAY-0001 and BDAY-0005 each have two purchases, so you can test totals and "latest purchase" logic per contact. BDAY-0004 and BDAY-0008 (the unsubscribed contacts) are left out. Two purchases fall outside a 30-day window, which gives a date filter something to exclude.
-
-| PurchaseID | SubscriberKey | PurchaseD
+- **Every value matches the plan.** PurchaseDate was saved as a real date, shown as midnight on each day (for example "9/20/2026 12:00:00 AM"). OrderAmount came through unchanged because the amounts are all whole numbers.
+- **The date-window test works.** As of today (2026-10-12), a 30-day filter goes back to 2026-09-12. That excludes only PUR-0004 and PUR-0008. PUR-0001 (9/20) is still inside the window.
+- **Contacts with more than one purchase:** BDAY-0001 has 2 purchases totalling 165, and BDAY-0005 has 2 totalling 385. Use these to test totals and latest-pur
 
 _[summary truncated — see the session record for the full text]_
 <!-- orchestrate:session-state:end -->
