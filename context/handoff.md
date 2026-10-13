@@ -42,14 +42,12 @@
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
 ### Engagement state — 2026-10-13
-**Status:** on track — Random Split added to Opened path; journey validates. Canvas & Not Opened action still pending.
+**Status:** on track — Journey validates; canvas & Not Opened action pending. MCP_Test search completed—found Guide & CloudPage assets, not email.
 
 **Done this session**
-- Added 50/50 Random Split (Follow-up 50-50 Test) to Opened path
-- Routed Variant A (50%) to Follow-up Variant A email (11027)
-- Routed Variant B (50%) to Follow-up Variant B email (11028)
-- Confirmed John_Mike_JB_Test validates with 0 errors, 0 warnings
-- Verified split format copied from JB_Welcome_Series Random Splits
+- Searched Content Builder for MCP_Test assets
+- Located MCP_Test_Guide (PDF) and MCP_Test_Guide_CloudPage (Web Page) in MCP CloudPage Project folder
+- Confirmed neither asset is a published CloudPage with live URL
 
 **Open items**
 - Replace four *.sample@example.com test addresses with controlled addresses before publish
@@ -87,26 +85,28 @@
 | Type | BUILD |
 | Outcome | COMPLETED |
 | Branch | `orchestrate/context` |
-| Session | `01fb15ac-1085-4a83-a04a-d398ce9717b9` |
+| Name | Email Studio & Content Bilder |
+| Session | `522cf0dc-16d2-4495-a2df-c89d86203b2d` |
 **In its own words (excerpt):**
-I added the 50/50 Random Split to the **Opened** path, and **John_Mike_JB_Test passes validation with 0 errors and 0 warnings.** The journey is still **Draft**. It has never been published, 0 contacts have entered it, and nothing was sent. I read the saved definition back separately to confirm all of this.
+No Content Builder asset is named exactly **MCP_Test**. I searched for names containing "MCP_Test" and found two assets, both in the same folder:
 
-**The journey now runs like this:**
+**Folder:** Content Builder → **MCP CloudPage Project** (folder ID 49103, directly under the root)
 
-```
-Entry source → Send Welcome Email → Bio_Check
-                                      ├─ Has Bio   → Wait 2 Days → Opened_Welcome_Check
-                                      │                              ├─ Opened     → Follow-up 50-50 Test
-                                      │                              │                ├─ Variant A (50%) → Follow-up Variant A → end
-                                      │                              │                └─ Variant B (50%) → Follow-up Variant B → end
-                                      │                              └─ Not Opened → end
-                                      └─ Remainder → end
-```
+| Asset | Type | ID | Created |
+|---|---|---|---|
+| MCP_Test_Guide | Document (PDF) | 32627 | 2026-08-28 |
+| MCP_Test_Guide_CloudPage | Web Page | 32628 | 2026-08-28 |
 
-| Item | Saved value |
-|---|---|
-| New split | `RANDOMSPLIT-1`, "Follow-up 50-50 Test", with two paths at `percentage: 50` each |
-| Variant A path | Goes to `EMAILV2-2` "Follow-up Variant A": e
+**If you can't see them in Content Builder:** both assets belong to the "Revecast Orchestrate MCP1 app user" integration user, not to you. Content Builder's default **My Content** view hides them. To find them:
+1. Switch the view from **My Content** to **All Content**.
+2. Clear any type filter (for example "Emails"). Neither asset is an email.
+3. Open the **MCP CloudPage Project** folder.
+
+`MCP_Test_Guide_CloudPage` is page content stored in Content Builder. It is not a published CloudPage with a live URL. To make it live, a person has to create or attach a landing page in **Web Studio → CloudPages** and publish it.
+
+If you meant a different asset, such as an email actually called "MCP_Test" in another business unit, tell me and I'll search there.
+
+Sources: checked live: Ma
 
 _[summary truncated — see the session record for the full text]_
 <!-- orchestrate:session-state:end -->
