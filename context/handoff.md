@@ -42,12 +42,10 @@
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
 ### Engagement state — 2026-10-13
-**Status:** on track — Banner image block added to Welcome Email; draft ready for preview test. Seven open items remain.
+**Status:** blocked — No live CloudPage with a public URL exists yet.
 
 **Done this session**
-- Created Welcome Banner - Image Block (34027) with Banner_GFLEC.jpg (700×150 px)
-- Added image block to Welcome Email - MCP_Test (34013) via AMPscript ContentBlockByKey
-- Confirmed both assets saved in Content Builder
+- No live CloudPage with a public URL exists yet. I couldn't create one because Marketing Cloud has no API for creating or publishing CloudPages. That step has to be done by hand in Web Studio, and I haven't done it. What I did build is the…
 
 **Open items**
 - Replace three remaining *.sample@example.com test addresses in John_Mike_Customers (JMC-0001, 0002, 0003, 0005)
@@ -88,27 +86,25 @@
 | Type | BUILD |
 | Outcome | COMPLETED |
 | Branch | `orchestrate/context` |
-| Name | Email Studio & Content Bilder |
-| Session | `522cf0dc-16d2-4495-a2df-c89d86203b2d` |
+| Name | Cloudpages |
+| Session | `8eaf6044-ee54-4895-856f-634a9be2aae7` |
 **In its own words (excerpt):**
-I added the banner image to **Welcome Email - MCP_Test (34013)** using a new reusable Image block. I read both assets back to confirm they saved. The email is still a draft and hasn't been sent.
+No live CloudPage with a public URL exists yet. I couldn't create one because Marketing Cloud has no API for creating or publishing CloudPages. That step has to be done by hand in Web Studio, and I haven't done it. What I did build is the page content and the Data Extension the form saves to. I read both back to check they saved.
 
-**1. New Image block:** Welcome Banner - Image Block
-| | |
-|---|---|
-| ID / Customer Key | 34027 / `MCP_Test_Welcome_Banner_Block` |
-| Type | Image Block |
-| Folder | MCP_Test (50064) |
-| Image | Banner_GFLEC.jpg (asset 18610, 700×150 px) |
-| Alt text | Welcome to the community |
-| Sizing | 600 px wide to fit the email, and it shrinks on smaller screens |
+**1. Data Extension: `Promo_Signup_Submissions`**
+- Key: `Promo_Signup_Submissions`, in the same folder as John_Mike_Customers (49911)
+- Fields:
+  - `EmailAddress` (Email Address, required, primary key)
+  - `Name` (Text 100, required)
+  - `SubmittedDate` (Date)
+  - `Source` (Text 50)
+- Because email is the key, someone who submits twice updates their existing row instead of adding a duplicate.
+- It's empty (0 rows) and not sendable.
 
-**2. Email change:** I added a new row just below the blue "Welcome to the community!" header. It pulls in the block with `%%=ContentBlockByKey("MCP_Test_Welcome_Banner_Block")=%%`. Nothing else changed: the subject, preheader, body, button and footer are the same as before.
-
-**Things to know:**
-- **The image is linked, not copied.** If you edit block 34027 later, for example to swap the image or change the alt text, this email and any other email that uses the block will update.
-- **Don't change the block's customer key.** The email finds the block by that key, so renaming the key would make the banner disappear.
-- **The image is scaled
+**2. Web Page content asset: `Promo_Signup`**
+- ID: 34051. Customer key: `MCP_Test_Promo_Signup`. Status: Draft. Folder: MCP_Test (50064).
+- **Layout:** a form with one Name field and one Email field, sized to fit phones and desktops, with labels for screen readers.
+- **Checks when the form is submitted:** both fields must be filled in, the name must be 100 characters or fewer, and the email must be a valid address. If a chec
 
 _[summary truncated — see the session record for the full text]_
 <!-- orchestrate:session-state:end -->
