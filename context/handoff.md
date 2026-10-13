@@ -42,10 +42,10 @@
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
 ### Engagement state — 2026-10-13
-**Status:** on track — Global Footer block created (34016); Newsletter & Welcome Email templates ready for link/content replacement
+**Status:** on track — Welcome Email subject & preheader updated; Global Footer & Newsletter templates ready for content/link replacement
 
 **Done this session**
-- Created Global Footer HTML block (ID 34016) in MCP_Test with Unsubscribe, Manage preferences, View in browser, address, and copyright
+- Updated Welcome Email subject to 'Welcome Aboard, %%FirstName%%!' and preheader to 'We're so glad you're here. Here's how to get started.'
 
 **Open items**
 - Replace four *.sample@example.com test addresses with controlled addresses before publish
@@ -65,17 +65,19 @@
 - Staging_Active_Subscribers_J includes all 10 contacts (BDAY-0001 to BDAY-0010)
 - VIP_Upsell_Target_J 10-row load approved
 - Cart_Abandonment_Target_J loaded with all 10 rows
+- Welcome Email subject uses %%FirstName%% with no fallback; greeting inside has fallback 'Hi there'
 
 **Blockers**
 - Canvas visual confirmation not yet done — Random Split appearance on Opened branch unconfirmed
 - Test data lacks LoyaltyTier field — emails will show fallback text 'Member' for all contacts
 - Global Footer address will not render if account sender details are blank (CAN-SPAM compliance risk)
+- FirstName field must exist in sending data extension or subject will show 'Welcome Aboard, !' for all subscribers
 
 **Next**
+- Send test of Welcome Email to verify subject, preheader, and FirstName personalization render correctly
 - Send test of Global Footer to verify address renders from account sender details
 - Replace all placeholder links in Basic Newsletter email (2 Read more + 1 Call to Action) with real URLs
 - Replace placeholder text in Basic Newsletter (newsletter name, month/year, headline, articles, call to action)
-- Update Welcome Email Get Started button to real URL
 - Open John_Mike_JB_Test in Journey Builder and visually confirm Random Split and variant emails on Opened branch
 - Replace four *.sample@example.com addresses with controlled test addresses
 - Run manual test with 4 test contacts to verify routing through Bio_Check and Engagement Split
@@ -90,24 +92,21 @@
 | Name | Email Studio & Content Bilder |
 | Session | `522cf0dc-16d2-4495-a2df-c89d86203b2d` |
 **In its own words (excerpt):**
-I created the **Global Footer** content block and read it back to confirm it saved. It's in **MCP_Test**, as you chose. That folder isn't shared, so this block is not in a shared "Global Content" folder.
+I updated **Welcome Email - MCP_Test (34013)** and read it back to confirm both changes saved. It's still a draft and hasn't been sent.
 
-| | |
-|---|---|
-| Name | Global Footer |
-| ID / Customer Key | 34016 / `d9170f47-b631-4ead-a12e-5ab8b5d35f67` |
-| Type | HTML Block (reusable content block) |
-| Folder | Content Builder → MCP_Test (50064) |
-| Status | Draft |
+| | Before | After |
+|---|---|---|
+| Subject | Welcome to the community! | **Welcome Aboard, %%FirstName%%!** |
+| Preheader | *(none)* | **We're so glad you're here. Here's how to get started.** |
 
-**What's in the footer:**
-- A line saying why the subscriber is getting the email
-- Links to **Unsubscribe**, **Manage preferences** and **View in browser**, using Marketing Cloud's built-in links
-- Your business name and physical mailing address, filled in automatically from the account's sender details
-- A copyright line with the current year, filled in when the email is sent
-- Light grey background, 12px text. It's full width, so it fits inside the 600px layouts of your other emails.
+The other "Welcome Email" (ID 33995) is unchanged, as is the body of this one.
 
-**How to use it:** open an email in the drag-and-drop editor, go to **Content → Saved Content**, and drag in **Global Footer**. The block isn't linked to any email yet. If you add it to the Welcome Email or the Basic Newsletter, they'll show two footers until you delete the 
+**Before you send it:**
+- **Blank first names:** as you chose, the subject has no fallback. A subscriber with no `FirstName` will see "Welcome Aboard, !". The greeting inside the email does have a fallback and says "Hi there".
+- **Field name:** `%%FirstName%%` only works if your sending data extension (or subscriber attribute) has a field named exactly `FirstName`. Otherwise the name will be blank for everyone.
+- **Heading and title:** the heading inside the email and the page title (the `<title>` tag) still say "Welcome to the community!". I can change them to match the new subject if you'd like.
+- **Placeholder copy:** the Get Started button still links to `https://www.example.com`.
+- **Preview:** I haven't previewed it with real subscriber data. Send yourself a test to ch
 
 _[summary truncated — see the session record for the full text]_
 <!-- orchestrate:session-state:end -->
