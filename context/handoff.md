@@ -42,10 +42,10 @@
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
 ### Engagement state — 2026-10-13
-**Status:** on track — Welcome Email subject & preheader done; one test address replaced in John_Mike_Customers; four *.sample@example.com addresses remain
+**Status:** blocked — I didn't send anything.
 
 **Done this session**
-- Replaced meera.sample@example.com with nagaruri.johnson@jaxconsult.com in John_Mike_Customers row JMC-0004
+- I didn't send anything. You chose the manual route, so here are the steps for sending the test yourself from Content Builder. I checked live that row **JMC-0004** in John_Mike_Customers has Email `nagaruri.johnson@jaxconsult.com` and First…
 
 **Open items**
 - Replace three remaining *.sample@example.com test addresses in John_Mike_Customers (JMC-0001, 0002, 0003, 0005)
@@ -87,22 +87,21 @@
 | Type | BUILD |
 | Outcome | COMPLETED |
 | Branch | `orchestrate/context` |
-| Session | `130de6ce-20be-4646-896c-78e5de6e72f4` |
+| Name | Email Studio & Content Bilder |
+| Session | `522cf0dc-16d2-4495-a2df-c89d86203b2d` |
 **In its own words (excerpt):**
-Row **JMC-0004** in **John_Mike_Customers** now has the new email. I read the row back after the update to confirm it.
+I didn't send anything. You chose the manual route, so here are the steps for sending the test yourself from Content Builder. I checked live that row **JMC-0004** in John_Mike_Customers has Email `nagaruri.johnson@jaxconsult.com` and FirstName `Updated`, so the test should arrive with the subject **"Welcome Aboard, Updated!"**.
 
-| Field | Before | After |
-|---|---|---|
-| Email | meera.sample@example.com | **nagaruri.johnson@jaxconsult.com** |
-| FirstName | Updated | Updated (unchanged) |
-| CreatedDate | 10/6/2026 9:48:31 AM | unchanged |
-| Bio | Avid reader | unchanged |
+I've assumed you mean **Welcome Email - MCP_Test (34013)**, the one we updated. If you meant the older "Welcome Email" (33995), the steps are the same but its subject is different.
 
-- **Only one row changed.** The other 4 rows (JMC-0001, 0002, 0003 and 0005) weren't touched.
-- **My first try failed.** Marketing Cloud rejected it with "Parameter {values} is required" because of how I formatted the request. I fixed the format and the second try worked.
-- **No email was sent.** I only changed data.
+## Steps for Preview & Test
 
-**Still open:** the other four rows still use `*.sample@example.com` addresses. That includes this data extension's own test contacts, so look at them before you publish any journey that sends to this data. I can change those to addresses you control too.
+1. **Find the email:** in Content Builder, switch **My Content** to **All Content** and clear any type filter. Open the **MCP_Test** folder, then open **Welcome Email - MCP_Test**.
+2. Click **Preview and Test** in the top right.
+3. **Choose the data source:** in the left panel, open the **Data Extension** or **Subscriber** picker and select **John_Mike_Customers**.
+4. **Choose the row:** search for or pick the row with ContactKey **JMC-0004** (Email nagaruri.johnson@jaxconsult.com). The preview should show "Hi Updated" in the greeting and "Welcome Aboard, Updated!" as the subject.
+5. Click **Test Send** in the top right.
+6. **Recipient:** enter `naga
 
-Sources: engagement context (context/handoff.md) · checked live: Marketing Cloud (John_Mike_Customers fields, rows before and after the update) · not checked: whether any journey or send currently uses this data extension
+_[summary truncated — see the session record for the full text]_
 <!-- orchestrate:session-state:end -->
