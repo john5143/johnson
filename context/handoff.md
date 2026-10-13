@@ -42,41 +42,42 @@
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
 ### Engagement state — 2026-10-13
-**Status:** blocked — I didn't send anything.
+**Status:** on track — Banner image block added to Welcome Email; draft ready for preview test. Seven open items remain.
 
 **Done this session**
-- I didn't send anything. You chose the manual route, so here are the steps for sending the test yourself from Content Builder. I checked live that row **JMC-0004** in John_Mike_Customers has Email `nagaruri.johnson@jaxconsult.com` and First…
+- Created Welcome Banner - Image Block (34027) with Banner_GFLEC.jpg (700×150 px)
+- Added image block to Welcome Email - MCP_Test (34013) via AMPscript ContentBlockByKey
+- Confirmed both assets saved in Content Builder
 
 **Open items**
 - Replace three remaining *.sample@example.com test addresses in John_Mike_Customers (JMC-0001, 0002, 0003, 0005)
-- Open John_Mike_JB_Test in Journey Builder canvas and visually confirm Random Split and both variant emails on Opened branch
+- Preview Welcome Email with row JMC-0004 to confirm banner renders and personalization works
+- Send test of Welcome Email to nagaruri.johnson@jaxconsult.com
+- Open John_Mike_JB_Test in Journey Builder and visually confirm Random Split and variant emails on Opened branch
 - Define what step follows Not Opened path on Engagement Split (currently ends journey)
-- Confirm Has Bio wait should be 2 days total or restore to 3 days + add 1-day wait after split
 - Run manual test in Journey Builder with 4 test contacts from John_Mike_Bio_Split_Test
-- Add LoyaltyTier field to John_Mike_Bio_Split_Test or confirm fallback text 'Member' is acceptable
 - Replace all placeholder links in Basic Newsletter email (2 Read more + 1 Call to Action button) with real URLs
 - Replace placeholder text in Basic Newsletter (newsletter name, month/year, headline, articles, call to action)
 
 **Decisions**
+- Welcome Banner - Image Block created as reusable block (34027) in MCP_Test folder
+- Banner image linked (not copied) so edits to block 34027 update all emails using it
+- Image scaled to 600 px wide for email display; original 700 px asset preserved
 - Global Footer block created in MCP_Test (not yet moved to Shared Content)
 - Engagement Split added to Has Bio path; wait set to 2 days for open window
 - Random Split (50/50) added to Opened path with Variant A and Variant B emails
-- Raw_Transactions_J Amount field remains Text(50)
-- Staging_Active_Subscribers_J includes all 10 contacts (BDAY-0001 to BDAY-0010)
-- VIP_Upsell_Target_J 10-row load approved
-- Cart_Abandonment_Target_J loaded with all 10 rows
 - Welcome Email subject uses %%FirstName%% with no fallback; greeting inside has fallback 'Hi there'
 
 **Blockers**
+- Banner render not yet previewed — use Preview & Test with row JMC-0004 to confirm
 - Canvas visual confirmation not yet done — Random Split appearance on Opened branch unconfirmed
 - Test data lacks LoyaltyTier field — emails will show fallback text 'Member' for all contacts
 - Global Footer address will not render if account sender details are blank (CAN-SPAM compliance risk)
-- FirstName field must exist in sending data extension or subject will show 'Welcome Aboard, !' for all subscribers
 
 **Next**
+- Preview Welcome Email - MCP_Test (34013) with row JMC-0004 to confirm banner and personalization render
+- Send test of Welcome Email to nagaruri.johnson@jaxconsult.com to verify subject, preheader, and image
 - Replace three remaining *.sample@example.com addresses in John_Mike_Customers with controlled test addresses
-- Send test of Welcome Email to verify subject, preheader, and FirstName personalization render correctly
-- Send test of Global Footer to verify address renders from account sender details
 - Open John_Mike_JB_Test in Journey Builder and visually confirm Random Split and variant emails on Opened branch
 - Run manual test with 4 test contacts to verify routing through Bio_Check and Engagement Split
 
@@ -90,18 +91,24 @@
 | Name | Email Studio & Content Bilder |
 | Session | `522cf0dc-16d2-4495-a2df-c89d86203b2d` |
 **In its own words (excerpt):**
-I didn't send anything. You chose the manual route, so here are the steps for sending the test yourself from Content Builder. I checked live that row **JMC-0004** in John_Mike_Customers has Email `nagaruri.johnson@jaxconsult.com` and FirstName `Updated`, so the test should arrive with the subject **"Welcome Aboard, Updated!"**.
+I added the banner image to **Welcome Email - MCP_Test (34013)** using a new reusable Image block. I read both assets back to confirm they saved. The email is still a draft and hasn't been sent.
 
-I've assumed you mean **Welcome Email - MCP_Test (34013)**, the one we updated. If you meant the older "Welcome Email" (33995), the steps are the same but its subject is different.
+**1. New Image block:** Welcome Banner - Image Block
+| | |
+|---|---|
+| ID / Customer Key | 34027 / `MCP_Test_Welcome_Banner_Block` |
+| Type | Image Block |
+| Folder | MCP_Test (50064) |
+| Image | Banner_GFLEC.jpg (asset 18610, 700×150 px) |
+| Alt text | Welcome to the community |
+| Sizing | 600 px wide to fit the email, and it shrinks on smaller screens |
 
-## Steps for Preview & Test
+**2. Email change:** I added a new row just below the blue "Welcome to the community!" header. It pulls in the block with `%%=ContentBlockByKey("MCP_Test_Welcome_Banner_Block")=%%`. Nothing else changed: the subject, preheader, body, button and footer are the same as before.
 
-1. **Find the email:** in Content Builder, switch **My Content** to **All Content** and clear any type filter. Open the **MCP_Test** folder, then open **Welcome Email - MCP_Test**.
-2. Click **Preview and Test** in the top right.
-3. **Choose the data source:** in the left panel, open the **Data Extension** or **Subscriber** picker and select **John_Mike_Customers**.
-4. **Choose the row:** search for or pick the row with ContactKey **JMC-0004** (Email nagaruri.johnson@jaxconsult.com). The preview should show "Hi Updated" in the greeting and "Welcome Aboard, Updated!" as the subject.
-5. Click **Test Send** in the top right.
-6. **Recipient:** enter `naga
+**Things to know:**
+- **The image is linked, not copied.** If you edit block 34027 later, for example to swap the image or change the alt text, this email and any other email that uses the block will update.
+- **Don't change the block's customer key.** The email finds the block by that key, so renaming the key would make the banner disappear.
+- **The image is scaled
 
 _[summary truncated — see the session record for the full text]_
 <!-- orchestrate:session-state:end -->
