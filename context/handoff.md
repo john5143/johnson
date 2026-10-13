@@ -42,12 +42,12 @@
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
 ### Engagement state — 2026-10-13
-**Status:** on track — Welcome Email created in MCP_Test folder (draft); Journey canvas & addresses still pending
+**Status:** on track — Welcome Email drafted; Basic Newsletter template & email created. Four placeholder links & test addresses still pending.
 
 **Done this session**
-- Created Welcome Email - MCP_Test (ID 34013) in new MCP_Test folder with header, first-name greeting, Get Started button, footer with unsubscribe
-- Fixed broken AMPscript unsubscribe link to standard Marketing Cloud unsubscribe
-- Confirmed email saved as draft with open tracking enabled
+- Created Basic Newsletter template (ID 34014) in MCP_Test folder with 600px layout and five editable sections
+- Created Basic Newsletter - MCP_Test email (ID 34015) built on template 34014 with placeholder blocks and first-name greeting
+- Confirmed both template and email saved as drafts in Content Builder
 
 **Open items**
 - Replace four *.sample@example.com test addresses with controlled addresses before publish
@@ -57,7 +57,7 @@
 - Run manual test in Journey Builder with 4 test contacts from John_Mike_Bio_Split_Test
 - Add LoyaltyTier field to John_Mike_Bio_Split_Test or confirm fallback text 'Member' is acceptable
 - Change Welcome Email Get Started button link from https://www.example.com to real URL
-- Verify FirstName field exists in sending data extension; update greeting logic if field name differs
+- Replace all placeholder links in Basic Newsletter email (2 Read more + 1 Call to Action button) with real URLs
 
 **Decisions**
 - Engagement Split added to Has Bio path; wait set to 2 days for open window
@@ -72,12 +72,12 @@
 - Test data lacks LoyaltyTier field — emails will show fallback text 'Member' for all contacts
 
 **Next**
+- Replace all placeholder links in Basic Newsletter email (2 Read more + 1 Call to Action) with real URLs
+- Replace placeholder text in Basic Newsletter (newsletter name, month/year, headline, articles, call to action)
 - Update Welcome Email Get Started button to real URL and verify FirstName field in sending data
 - Open John_Mike_JB_Test in Journey Builder and visually confirm Random Split and variant emails on Opened branch
 - Replace four *.sample@example.com addresses with controlled test addresses
-- Decide whether Not Opened path should send reminder email or end journey
 - Run manual test with 4 test contacts to verify routing through Bio_Check and Engagement Split
-- Publish John_Mike_JB_Test once canvas confirmed and addresses replaced
 
 **Checked live on 2026-10-13:** the Salesforce org
 ### Last session — 2026-10-13
@@ -89,28 +89,32 @@
 | Name | Email Studio & Content Bilder |
 | Session | `522cf0dc-16d2-4495-a2df-c89d86203b2d` |
 **In its own words (excerpt):**
-I created the email and read it back to confirm it saved correctly. It's a draft and has not been sent.
+I created the Basic Newsletter template and an email built on it, then read both back to confirm they saved. Both are drafts. Nothing has been sent.
 
-**New folder:** Content Builder → **MCP_Test** (ID 50064, at the root)
-
-**New email:**
+**1. Template:** Basic Newsletter
 | | |
 |---|---|
-| Name | Welcome Email - MCP_Test |
-| ID / Customer Key | 34013 / `d18b1271-8834-4bfb-bdfb-36e413cf15ac` |
-| Type | HTML Email (HTML Paste) |
-| Folder | MCP_Test |
-| Subject | Welcome to the community! |
+| ID / Customer Key | 34014 / `cab0a678-a59f-4274-9c8c-a839d036cc5f` |
+| Type | Template |
+| Folder | MCP_Test (50064) |
+| Layout | 600px single column with five editable sections: Header, Hero, Articles, Call to Action, Footer |
+
+You can reuse this template for future newsletters.
+
+**2. Email:** Basic Newsletter - MCP_Test
+| | |
+|---|---|
+| ID / Customer Key | 34015 / `a406a1e4-05ef-4b54-939d-d2d305db410e` |
+| Type | Template-Based Email, built on template 34014 |
+| Folder | MCP_Test (50064) |
+| Subject | Your monthly newsletter is here |
+| Preheader | The latest news, updates and highlights from our team. |
 | Status | Draft |
 
-The existing "Welcome Email" (ID 33995) was not changed.
-
-**What's in it:** a 600px-wide layout with a header, a greeting that uses the subscriber's first name (and says "Hi there" if there isn't one), a short welcome message, a "Get Started" button, and a footer with your sender address, Unsubscribe and Manage preferences links. Open tracking is on, and the plain-text version is generated from the HTML.
-
-**One fix after creating it:** in my first version, the Unsubscribe link pointed at an AMPscript variable that was never defined, so the link would have been broken. I replaced it with the standard Marketing Cloud unsubscribe link and checked that the saved version has it.
-
-**Before you send it:**
-- The **Get Started** button links to `https://www.example.c
+**Placeholder blocks (6, each editable on its own in the drag-and-drop editor):**
+- **Header:** banner reading `[Newsletter Name] · [Month Year]`
+- **Hero:** `[Headline goes here]` and an intro line that greets the subscriber by first name, or says "Hi there" if there isn't one
+- **Articles:** two article blocks, each with a title, a summary and a "Read more" l
 
 _[summary truncated — see the session record for the full text]_
 <!-- orchestrate:session-state:end -->
