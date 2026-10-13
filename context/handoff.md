@@ -42,12 +42,10 @@
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
 ### Engagement state — 2026-10-13
-**Status:** on track — Welcome Email drafted; Basic Newsletter template & email created. Four placeholder links & test addresses still pending.
+**Status:** on track — Global Footer block created (34016); Newsletter & Welcome Email templates ready for link/content replacement
 
 **Done this session**
-- Created Basic Newsletter template (ID 34014) in MCP_Test folder with 600px layout and five editable sections
-- Created Basic Newsletter - MCP_Test email (ID 34015) built on template 34014 with placeholder blocks and first-name greeting
-- Confirmed both template and email saved as drafts in Content Builder
+- Created Global Footer HTML block (ID 34016) in MCP_Test with Unsubscribe, Manage preferences, View in browser, address, and copyright
 
 **Open items**
 - Replace four *.sample@example.com test addresses with controlled addresses before publish
@@ -56,10 +54,11 @@
 - Confirm Has Bio wait should be 2 days total or restore to 3 days + add 1-day wait after split
 - Run manual test in Journey Builder with 4 test contacts from John_Mike_Bio_Split_Test
 - Add LoyaltyTier field to John_Mike_Bio_Split_Test or confirm fallback text 'Member' is acceptable
-- Change Welcome Email Get Started button link from https://www.example.com to real URL
 - Replace all placeholder links in Basic Newsletter email (2 Read more + 1 Call to Action button) with real URLs
+- Replace placeholder text in Basic Newsletter (newsletter name, month/year, headline, articles, call to action)
 
 **Decisions**
+- Global Footer block created in MCP_Test (not yet moved to Shared Content)
 - Engagement Split added to Has Bio path; wait set to 2 days for open window
 - Random Split (50/50) added to Opened path with Variant A and Variant B emails
 - Raw_Transactions_J Amount field remains Text(50)
@@ -70,11 +69,13 @@
 **Blockers**
 - Canvas visual confirmation not yet done — Random Split appearance on Opened branch unconfirmed
 - Test data lacks LoyaltyTier field — emails will show fallback text 'Member' for all contacts
+- Global Footer address will not render if account sender details are blank (CAN-SPAM compliance risk)
 
 **Next**
+- Send test of Global Footer to verify address renders from account sender details
 - Replace all placeholder links in Basic Newsletter email (2 Read more + 1 Call to Action) with real URLs
 - Replace placeholder text in Basic Newsletter (newsletter name, month/year, headline, articles, call to action)
-- Update Welcome Email Get Started button to real URL and verify FirstName field in sending data
+- Update Welcome Email Get Started button to real URL
 - Open John_Mike_JB_Test in Journey Builder and visually confirm Random Split and variant emails on Opened branch
 - Replace four *.sample@example.com addresses with controlled test addresses
 - Run manual test with 4 test contacts to verify routing through Bio_Check and Engagement Split
@@ -89,32 +90,24 @@
 | Name | Email Studio & Content Bilder |
 | Session | `522cf0dc-16d2-4495-a2df-c89d86203b2d` |
 **In its own words (excerpt):**
-I created the Basic Newsletter template and an email built on it, then read both back to confirm they saved. Both are drafts. Nothing has been sent.
+I created the **Global Footer** content block and read it back to confirm it saved. It's in **MCP_Test**, as you chose. That folder isn't shared, so this block is not in a shared "Global Content" folder.
 
-**1. Template:** Basic Newsletter
 | | |
 |---|---|
-| ID / Customer Key | 34014 / `cab0a678-a59f-4274-9c8c-a839d036cc5f` |
-| Type | Template |
-| Folder | MCP_Test (50064) |
-| Layout | 600px single column with five editable sections: Header, Hero, Articles, Call to Action, Footer |
-
-You can reuse this template for future newsletters.
-
-**2. Email:** Basic Newsletter - MCP_Test
-| | |
-|---|---|
-| ID / Customer Key | 34015 / `a406a1e4-05ef-4b54-939d-d2d305db410e` |
-| Type | Template-Based Email, built on template 34014 |
-| Folder | MCP_Test (50064) |
-| Subject | Your monthly newsletter is here |
-| Preheader | The latest news, updates and highlights from our team. |
+| Name | Global Footer |
+| ID / Customer Key | 34016 / `d9170f47-b631-4ead-a12e-5ab8b5d35f67` |
+| Type | HTML Block (reusable content block) |
+| Folder | Content Builder → MCP_Test (50064) |
 | Status | Draft |
 
-**Placeholder blocks (6, each editable on its own in the drag-and-drop editor):**
-- **Header:** banner reading `[Newsletter Name] · [Month Year]`
-- **Hero:** `[Headline goes here]` and an intro line that greets the subscriber by first name, or says "Hi there" if there isn't one
-- **Articles:** two article blocks, each with a title, a summary and a "Read more" l
+**What's in the footer:**
+- A line saying why the subscriber is getting the email
+- Links to **Unsubscribe**, **Manage preferences** and **View in browser**, using Marketing Cloud's built-in links
+- Your business name and physical mailing address, filled in automatically from the account's sender details
+- A copyright line with the current year, filled in when the email is sent
+- Light grey background, 12px text. It's full width, so it fits inside the 600px layouts of your other emails.
+
+**How to use it:** open an email in the drag-and-drop editor, go to **Content → Saved Content**, and drag in **Global Footer**. The block isn't linked to any email yet. If you add it to the Welcome Email or the Basic Newsletter, they'll show two footers until you delete the 
 
 _[summary truncated — see the session record for the full text]_
 <!-- orchestrate:session-state:end -->
