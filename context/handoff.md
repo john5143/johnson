@@ -41,20 +41,20 @@
 <!-- orchestrate:session-state:start -->
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
-### Engagement state — 2026-10-12
-**Status:** on track — Cart_Abandonment_Target_J loaded & verified: 10 rows persisted. All 13 test tables now populated.
+### Engagement state — 2026-10-13
+**Status:** on track — Wait 3 Days added to Has Bio path, journey validates. Ready for test run after address swap.
 
 **Done this session**
-- Loaded all 10 sample rows into Cart_Abandonment_Target_J
-- Verified persistence: read-back matches plan exactly
-- Confirmed CartTotal whole numbers saved without rounding
-- Validated source-to-target row alignment for query testing
+- Added WAIT-1 (3 Days) to Has Bio outcome in John_Mike_JB_Test
+- Confirmed journey validates: 0 errors, 1 warning (long wait advice only)
+- Verified saved definition matches intent: Has Bio → Wait 3 Days → end
 
 **Open items**
 - Decide OrderAmount scale for Purchase_History_J (Decimal(18,0) vs Decimal(18,2))
-- Run manual test in Journey Builder with 4 test contacts from John_Mike_Bio_Split_Test
 - Replace sample@example.com addresses in John_Mike_JB_Test with controlled test addresses
-- Publish John_Mike_JB_Test journey after routing confirmed
+- Run manual test in Journey Builder with 4 test contacts from John_Mike_Bio_Split_Test
+- Define what step follows the 3-day wait on Has Bio path (currently ends journey)
+- Publish John_Mike_JB_Test journey after routing confirmed and addresses replaced
 - Resolve testOrchestrateMap error from previous automation run
 - Confirm schema change to Decimal(18,2) for CartTotal, TotalSpent, OrderAmount if real money values needed
 
@@ -63,46 +63,47 @@
 - Staging_Active_Subscribers_J includes all 10 contacts (BDAY-0001 to BDAY-0010) for filtering validation
 - VIP_Upsell_Target_J 10-row load approved and completed
 - Cart_Abandonment_Target_J loaded with all 10 rows (all contacts, not Active-only subset)
+- 3-day wait added to Has Bio path; can reduce to minutes for testing if needed
 
 **Blockers**
 - OrderAmount field scale (0) in Purchase_History_J cannot store decimal values — decision pending on schema change
 
 **Next**
-- Decide: convert CartTotal, TotalSpent, OrderAmount to Decimal(18,2) for real money values or keep as Decimal(18,0)
+- Replace four *.sample@example.com test addresses in John_Mike_JB_Test with controlled addresses
+- Define next step after 3-day wait on Has Bio path (currently journey ends)
 - Run manual Journey Builder test with 4 test contacts from John_Mike_Bio_Split_Test
-- Replace sample@example.com test addresses in John_Mike_JB_Test
-- Resolve testOrchestrateMap automation error
+- Decide: convert CartTotal, TotalSpent, OrderAmount to Decimal(18,2) for real money values or keep as Decimal(18,0)
 
-**Checked live on 2026-10-12:** the Salesforce org
-### Last session — 2026-10-12
+**Checked live on 2026-10-13:** the Salesforce org
+### Last session — 2026-10-13
 | | |
 |---|---|
 | Type | BUILD |
 | Outcome | COMPLETED |
 | Branch | `orchestrate/context` |
-| Session | `130de6ce-20be-4646-896c-78e5de6e72f4` |
+| Session | `01fb15ac-1085-4a83-a04a-d398ce9717b9` |
 **In its own words (excerpt):**
-I loaded all 10 sample rows into **Cart_Abandonment_Target_J**. It had 0 rows before, and reading it back after the load returned 10.
+I added the 3-day Wait to the **Has Bio** path and the journey still passes validation. There are no errors and one warning, explained below. **John_Mike_JB_Test is still Draft**: it has never been published, 0 contacts have entered it, and nothing was sent. I didn't change the entry source, the email or the test data.
 
-| SubscriberKey | AbandonDate | CartTotal |
-|---|---|---|
-| BDAY-0001 | 2026-10-01 | 129 |
-| BDAY-0002 | 2026-10-02 | 45 |
-| BDAY-0003 | 2026-10-03 | 310 |
-| BDAY-0004 | 2026-10-04 | 78 |
-| BDAY-0005 | 2026-10-05 | 560 |
-| BDAY-0006 | 2026-10-06 | 22 |
-| BDAY-0007 | 2026-10-07 | 199 |
-| BDAY-0008 | 2026-10-08 | 87 |
-| BDAY-0009 | 2026-10-09 | 415 |
-| BDAY-0010 | 2026-10-10 | 64 |
+**The journey now runs like this** (I read the saved definition back separately to confirm it):
 
-- **Every value matches the plan.** AbandonDate saved as a real date (Marketing Cloud shows midnight on each day, e.g. "10/1/2026 12:00:00 AM"). CartTotal saved as whole numbers, so nothing was rounded.
-- **It matches the source.** Each row has the same values as that contact's cart in Cart_Abandonment_J, so you can check a query's output against it directly.
-- **You can test an Active-only filter on it.** A join to Master_Subscribers_J would remove BDAY-0003, BDAY-0004, BDAY-0007 and BDAY-0008.
-- **No email was sent.** The load only wrote data.
+```
+Entry source → Send Welcome Email → Bio_Check
+                                      ├─ Has Bio   → Wait 3 Days → end
+                                      └─ Remainder → end
+```
 
-**Where the test data stands:** all 13 data extensions you've asked about this session now have 10 rows each. Cart_Abandonment_T
+| Item | Saved value |
+|---|---|
+| New activity | `WAIT-1`, named "Wait 3 Days", type `WAIT` |
+| Duration | `waitDuration: 3`, `waitUnit: DAYS` (a fixed wait, not wait-until-date) |
+| Has Bio outcome | Now points to `WAIT-1`. Before, it ended the journey. |
+| Remainder outcome | Unchanged. It still ends the journey. |
+| Bio_Check conditions | Unchanged (`IsNotNull` + `NotEqual`) |
+| Send Welcome Email | Unchanged: email 10606, same subject, profiles and publication list 1115 |
+
+**Validation:** it completed with 0 errors and 1 warning:
+> `121547`: "The journey has a long wait (3 days), please
 
 _[summary truncated — see the session record for the full text]_
 <!-- orchestrate:session-state:end -->
