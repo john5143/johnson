@@ -42,13 +42,13 @@
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
 ### Engagement state — 2026-10-13
-**Status:** on track — Welcome Email subject & preheader updated; Global Footer & Newsletter templates ready for content/link replacement
+**Status:** on track — Welcome Email subject & preheader done; one test address replaced in John_Mike_Customers; four *.sample@example.com addresses remain
 
 **Done this session**
-- Updated Welcome Email subject to 'Welcome Aboard, %%FirstName%%!' and preheader to 'We're so glad you're here. Here's how to get started.'
+- Replaced meera.sample@example.com with nagaruri.johnson@jaxconsult.com in John_Mike_Customers row JMC-0004
 
 **Open items**
-- Replace four *.sample@example.com test addresses with controlled addresses before publish
+- Replace three remaining *.sample@example.com test addresses in John_Mike_Customers (JMC-0001, 0002, 0003, 0005)
 - Open John_Mike_JB_Test in Journey Builder canvas and visually confirm Random Split and both variant emails on Opened branch
 - Define what step follows Not Opened path on Engagement Split (currently ends journey)
 - Confirm Has Bio wait should be 2 days total or restore to 3 days + add 1-day wait after split
@@ -74,12 +74,10 @@
 - FirstName field must exist in sending data extension or subject will show 'Welcome Aboard, !' for all subscribers
 
 **Next**
+- Replace three remaining *.sample@example.com addresses in John_Mike_Customers with controlled test addresses
 - Send test of Welcome Email to verify subject, preheader, and FirstName personalization render correctly
 - Send test of Global Footer to verify address renders from account sender details
-- Replace all placeholder links in Basic Newsletter email (2 Read more + 1 Call to Action) with real URLs
-- Replace placeholder text in Basic Newsletter (newsletter name, month/year, headline, articles, call to action)
 - Open John_Mike_JB_Test in Journey Builder and visually confirm Random Split and variant emails on Opened branch
-- Replace four *.sample@example.com addresses with controlled test addresses
 - Run manual test with 4 test contacts to verify routing through Bio_Check and Engagement Split
 
 **Checked live on 2026-10-13:** the Salesforce org
@@ -89,24 +87,22 @@
 | Type | BUILD |
 | Outcome | COMPLETED |
 | Branch | `orchestrate/context` |
-| Name | Email Studio & Content Bilder |
-| Session | `522cf0dc-16d2-4495-a2df-c89d86203b2d` |
+| Session | `130de6ce-20be-4646-896c-78e5de6e72f4` |
 **In its own words (excerpt):**
-I updated **Welcome Email - MCP_Test (34013)** and read it back to confirm both changes saved. It's still a draft and hasn't been sent.
+Row **JMC-0004** in **John_Mike_Customers** now has the new email. I read the row back after the update to confirm it.
 
-| | Before | After |
+| Field | Before | After |
 |---|---|---|
-| Subject | Welcome to the community! | **Welcome Aboard, %%FirstName%%!** |
-| Preheader | *(none)* | **We're so glad you're here. Here's how to get started.** |
+| Email | meera.sample@example.com | **nagaruri.johnson@jaxconsult.com** |
+| FirstName | Updated | Updated (unchanged) |
+| CreatedDate | 10/6/2026 9:48:31 AM | unchanged |
+| Bio | Avid reader | unchanged |
 
-The other "Welcome Email" (ID 33995) is unchanged, as is the body of this one.
+- **Only one row changed.** The other 4 rows (JMC-0001, 0002, 0003 and 0005) weren't touched.
+- **My first try failed.** Marketing Cloud rejected it with "Parameter {values} is required" because of how I formatted the request. I fixed the format and the second try worked.
+- **No email was sent.** I only changed data.
 
-**Before you send it:**
-- **Blank first names:** as you chose, the subject has no fallback. A subscriber with no `FirstName` will see "Welcome Aboard, !". The greeting inside the email does have a fallback and says "Hi there".
-- **Field name:** `%%FirstName%%` only works if your sending data extension (or subscriber attribute) has a field named exactly `FirstName`. Otherwise the name will be blank for everyone.
-- **Heading and title:** the heading inside the email and the page title (the `<title>` tag) still say "Welcome to the community!". I can change them to match the new subject if you'd like.
-- **Placeholder copy:** the Get Started button still links to `https://www.example.com`.
-- **Preview:** I haven't previewed it with real subscriber data. Send yourself a test to ch
+**Still open:** the other four rows still use `*.sample@example.com` addresses. That includes this data extension's own test contacts, so look at them before you publish any journey that sends to this data. I can change those to addresses you control too.
 
-_[summary truncated — see the session record for the full text]_
+Sources: engagement context (context/handoff.md) · checked live: Marketing Cloud (John_Mike_Customers fields, rows before and after the update) · not checked: whether any journey or send currently uses this data extension
 <!-- orchestrate:session-state:end -->
