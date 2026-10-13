@@ -42,12 +42,10 @@
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
 ### Engagement state — 2026-10-13
-**Status:** at risk — BUILD complete: CloudPage content & DE built; emails drafted but never sent—no metrics yet. Blockers remain on preview & test execution.
+**Status:** blocked — BUILD: Email content complete; preview & test execution blocked—steveorg unreachable, cannot verify field access.
 
 **Done this session**
-- Confirmed Welcome Email (33995, 34013) and Simple Welcome Email (10606) have zero send history—no open/click/bounce data available
-- Identified journey John_Mike_JB_Test uses Simple Welcome Email (10606), not the MCP_Test variants
-- Verified Simple Welcome Email has 6 completed send jobs with 0 targeted/sent/delivered across all
+- Confirmed steveorg connection unavailable—halted diagnosis as instructed
 
 **Open items**
 - Preview Welcome Email - MCP_Test (34013) with row JMC-0004 to confirm banner and personalization render
@@ -69,44 +67,44 @@
 - Welcome Email subject uses %%FirstName%% with no fallback; greeting inside has fallback 'Hi there'
 
 **Blockers**
-- Banner render not yet previewed — use Preview & Test with row JMC-0004 to confirm
-- Canvas visual confirmation not yet done — Random Split appearance on Opened branch unconfirmed
-- Test data lacks LoyaltyTier field — emails will show fallback text 'Member' for all contacts
+- steveorg not reachable—NamedOrgNotFoundError, no Salesforce org signed in for this session
+- Banner render not yet previewed—use Preview & Test with row JMC-0004 to confirm
+- Canvas visual confirmation not yet done—Random Split appearance on Opened branch unconfirmed
+- Test data lacks LoyaltyTier field—emails will show fallback text 'Member' for all contacts
 - Global Footer address will not render if account sender details are blank (CAN-SPAM compliance risk)
 - No real send executed yet—test sends needed to generate trackable metrics
 
 **Next**
-- Execute Preview & Test on Welcome Email - MCP_Test (34013) with row JMC-0004 to confirm banner renders and personalization works
+- Have Salesforce admin reconnect steveorg via Setup → Revecast Orchestrate → Connected Orgs and Test Connection
+- Start new session with steveorg as target org to verify Leave_Entitlement__c.Available_Days__c field access
+- Execute Preview & Test on Welcome Email - MCP_Test (34013) with row JMC-0004 to confirm banner renders
 - Send test of Welcome Email to nagaruri.johnson@jaxconsult.com and check send log for delivery and tracking
-- Replace three remaining *.sample@example.com test addresses in John_Mike_Customers
-- Open John_Mike_JB_Test in Journey Builder and visually confirm Random Split and variant emails on Opened branch
-- Run manual test with 4 test contacts from John_Mike_Bio_Split_Test to verify routing through Bio_Check and Engagement Split
 
-**Checked live on 2026-10-13:** the Salesforce org
+**Checked live on 2026-10-13:** the repository
 ### Last session — 2026-10-13
 | | |
 |---|---|
 | Type | BUILD |
 | Outcome | COMPLETED |
-| Branch | `orchestrate/context` |
-| Name | Email Studio & Content Bilder |
-| Session | `522cf0dc-16d2-4495-a2df-c89d86203b2d` |
+| Branch | `main` |
+| Session | `022a685d-e9fc-4203-8482-1fa67d6c5dd0` |
 **In its own words (excerpt):**
-I couldn't get open, click or bounce rates, because neither email named "Welcome Email" has ever been sent. There is no send to report on.
+I stopped before running any diagnosis, because **steveorg isn't reachable from this session**. You asked me to halt if either connection failed, so I didn't look at `Leave_Entitlement__c.Available_Days__c` at all: no field metadata, no sObject Describe, no SOQL, no FLS check.
 
-**What I checked:**
+**Access check:**
 
-| Email | Content Builder ID | Classic email ID | Send jobs found |
-|---|---|---|---|
-| Welcome Email | 33995 | 11022 | **None** |
-| Welcome Email - MCP_Test | 34013 | 11030 | **None** |
+| Connection | Result |
+|---|---|
+| **steveorg** (Salesforce) | ❌ Not available. Looking up the org by name failed with: `NamedOrgNotFoundError — No authorization information found for steveorg.` Listing all orgs came back empty, so no Salesforce org of any kind is signed in for this session. |
+| **`sprint2-leave-balance`** (GitHub, `john5143/johnson`) | ✅ Available. The branch exists at commit `82456e3`. I listed it but didn't read any files on it. |
 
-- I searched the send log by email name and by classic email ID. Both searches came back empty.
-- I also checked the journey **John_Mike_JB_Test**. Its "Send Welcome Email" step doesn't use either of these emails. It uses a different one, **Simple Welcome Email** (ID 10606). The journey is also still a draft that has never been published, and no contacts have entered it.
+I made no changes anywhere.
 
-**Closest match: "Simple Welcome Email" (10606).** It has 6 send jobs marked Complete (IDs 126487, 126492, 126538, 127400, 127403, 127407). In every one of them, 0 emails were targeted, sent or delivered, and there were 0 opens, 0 clicks and 0 bounces. With nothing delivered, there are no rates to calculate. The send log also didn't return dates for these jobs, so I can't say which one was last.
+**To unblock:**
+1. Connect steveorg for this session. Have a Salesforce admin connect or re-authorize the org under **Setup → Revecast Orchestrate → Connected Orgs** and use **Test Connection**. Then start a new session with steveorg as the target org.
+2. Rerun this request. The branch is ready, so I'll compare the field definition there against the org and walk through Describe, SOQL and FLS.
 
-**Not checked:** I couldn't look up triggered send definitions for these ema
+If you want someth
 
 _[summary truncated — see the session record for the full text]_
 <!-- orchestrate:session-state:end -->
