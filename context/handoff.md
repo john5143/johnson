@@ -42,17 +42,17 @@
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
 ### Engagement state — 2026-10-14
-**Status:** at risk — Field access fix validated, awaiting approval to deploy. BUILD tasks paused pending blocker resolution.
+**Status:** on track — Permission set deployed successfully with Available_Days__c read grant. Engine tests pending—classes not yet in org.
 
 **Done this session**
-- Validated check-only deploy of Leave_Balance_Engine permission set with Available_Days__c read grant (validation 0AfjV0000040eJKSAY passed)
-- Confirmed org and GitHub field match (formula, type, blanks); noted precision difference (18 vs 8 digits) for future decision
-- Identified no users currently assigned to Leave_Balance_Engine permission set
+- Deployed Leave_Balance_Engine permission set (0AfjV0000040fAZSAY) with Available_Days__c read grant to orgfarm-232477b490-dev-ed
+- Confirmed John Steve assigned to permission set and has read access to Available_Days__c
+- Validated SOQL query runs without INVALID_FIELD error (0 records in Leave_Entitlement__c)
 
 **Open items**
-- BLOCKER: Approve deploy of permission set with Available_Days__c grant, then assign to test user and re-run engine tests (19/21, 20/36 failures)
-- Preview Welcome Email - MCP_Test (34013) with row JMC-0004 to confirm banner and personalization render
-- Send test of Welcome Email to nagaruri.johnson@jaxconsult.com to verify subject, preheader, and image
+- Re-run LeaveBalanceEngineTest (19/21, 20/36 failures) once Apex classes deployed to org
+- Preview Welcome Email - MCP_Test (34013) with row JMC-0004 to confirm banner and personalization
+- Send test of Welcome Email to nagaruri.johnson@jaxconsult.com to verify subject, preheader, image
 - Replace three remaining *.sample@example.com addresses in John_Mike_Customers (JMC-0001, 0002, 0003, 0005)
 - Open John_Mike_JB_Test in Journey Builder and visually confirm Random Split and variant emails on Opened branch
 - Define what step follows Not Opened path on Engagement Split (currently ends journey)
@@ -70,14 +70,12 @@
 - Target org: orgfarm-232477b490-dev-ed (MAX Developer Edition, ID 00DjV000003BVbRUAW)
 
 **Blockers**
-- Available_Days__c field has no field-level access—blocks engine tests (19/21 and 20/36 failures) and SOQL queries. Fix validated, awaiting approval to deploy.
-- No users assigned to Leave_Balance_Engine permission set; test user assignment required after deploy
+- LeaveBalanceEngine Apex classes not yet deployed to org—cannot re-run tests to confirm field access resolves 19/21 and 20/36 failures
 - Data Cloud tools unavailable—Revecast Orchestrate Connector package needs upgrade for missing scopes
 
 **Next**
-- Approve deploy of Leave_Balance_Engine permission set with Available_Days__c read grant
-- Assign Leave_Balance_Engine permission set to test user (John Steve or designated tester)
-- Re-run LeaveBalanceEngineTest (19/21, 20/36) to confirm field access resolves failures
+- Deploy LeaveBalanceEngine Apex classes to orgfarm-232477b490-dev-ed
+- Re-run LeaveBalanceEngineTest to confirm Available_Days__c field access resolves test failures
 - Resume BUILD: Preview Welcome Email, test Journey Builder splits, finalize Basic Newsletter content
 
 **Checked live on 2026-10-14:** nothing — the status above is as recorded, not re-checked
@@ -89,24 +87,30 @@
 | Branch | `main` |
 | Session | `9b7d39c9-0d43-41d4-b21e-f81bf48b101a` |
 **In its own words (excerpt):**
-The check-only validation passed and nothing has been deployed. It adds a single read-only grant on `Available_Days__c` to `Leave_Balance_Engine`. The org and the repo are both unchanged: the permission set's last-modified date is still 2026-09-29, and the field grant is still missing.
+━━ Build status (auto-checked from tool results — deploy = sf CLI exit, not runtime effect) ━━
+• Code committed: no
+• Pushed to GitHub: no
+• Validated (sf deploy validate): yes
+• Deployed to org: yes — orgfarm-232477b490-dev-ed
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-**1. Org ID.** The authenticated org `orgfarm-232477b490-dev-ed` returns `00DjV000003BVbRUAW`. Its first 15 characters are `00DjV000003BVbR`, so it matches.
+The fix is deployed and every check passed. John Steve can now read `Available_Days__c` but not edit it, and the SOQL query runs without error. The object has no records yet, though, so the query returned 0 rows.
 
-**2. The field vs GitHub (`sprint2-leave-balance`)**
+**Deployment**
 
-| | Org | GitHub | Match |
-|---|---|---|---|
-| Exists | Yes (`00NjV00000atiQHUAY`) | Yes | ✅ |
-| Formula | `Entitled_Days__c + Carry_Forward_Days__c - Used_Days__c - Pending_Days__c` | Same | ✅ |
-| Blanks treated as | Zero | Zero | ✅ |
-| Type and decimals | Number, 2 decimals | Number, 2 decimals | ✅ |
-| Precision (total digits) | 18 | 8 | ⚠️ Differs |
+| | |
+|---|---|
+| Org | `orgfarm-232477b490-dev-ed`, ID `00DjV000003BVbRUAW` (re-checked before deploying) |
+| Deployment ID | **`0AfjV0000040fAZSAY`** |
+| Result | Succeeded: 1 component deployed (`Leave_Balance_Engine`, updated), 0 errors |
+| What was deployed | The same package that passed validation. It matched the org's copy except for the one new grant, and the permission set hadn't changed in the org since validation. |
+| Tests | None run. The package contains no Apex. |
 
-The precision difference doesn't affect access, so I left the field out of this change. If you ever deploy the GitHub field file as it is, it would cut precision to 8, so decide which value you want before then.
+**Checks**
 
-**3. The permission set: org vs GitHub**
-- Both have read-only access to the two Leave objects, with no create, edit, delete, View 
+| Check | Result |
+|---|---|
+| Grant on the permission set | ✅ `Leave_Entitlement__c.Available_Days__c`: read yes, edit no. The set now has 14 field grants (13 before). Its object access is unchang
 
 _[summary truncated — see the session record for the full text]_
 <!-- orchestrate:session-state:end -->
