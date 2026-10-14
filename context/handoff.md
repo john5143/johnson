@@ -42,10 +42,11 @@
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
 ### Engagement state — 2026-10-14
-**Status:** blocked — BUILD complete; Salesforce org connection required to proceed. No org available in this session.
+**Status:** on track — Org connected (orgfarm-232477b490-dev-ed). BUILD tasks resume; Available_Days__c review unblocked.
 
 **Done this session**
-- None
+- Confirmed Salesforce org connection: orgfarm-232477b490-dev-ed (MAX, Dev Edition, John Steve user)
+- Verified org contains Leave_Entitlement__c custom object with Available_Days__c field
 
 **Open items**
 - Preview Welcome Email - MCP_Test (34013) with row JMC-0004 to confirm banner and personalization render
@@ -65,17 +66,15 @@
 - Engagement Split added to Has Bio path; wait set to 2 days for open window
 - Random Split (50/50) added to Opened path with Variant A and Variant B emails
 - Welcome Email subject uses %%FirstName%% with no fallback; greeting inside has fallback 'Hi there'
-- Halt diagnosis if either steveorg or GitHub connection fails
+- Target org: orgfarm-232477b490-dev-ed (MAX Developer Edition)
 
 **Blockers**
-- No Salesforce org connected to this session—sf org list returns 0 orgs. steveorg, JohnDev-Org, and orgfarm-232477b490-dev-ed all failed to connect. Org must be selected when session starts; cannot be added mid-session.
+- Data Cloud tools unavailable—Revecast Orchestrate Connector package needs upgrade for missing scopes
 
 **Next**
-- Go to Connectors page under Salesforce orgs; verify steveorg, JohnDev-Org, or orgfarm-232477b490-dev-ed is listed and approved
-- If org is waiting for approval, workspace owner or admin must approve it under Approvals
-- Start new BUILD session with one of these orgs selected as target org
-- Run Available_Days__c field access review in connected org session
 - Execute Preview & Test on Welcome Email - MCP_Test (34013) with row JMC-0004
+- Run Available_Days__c field access review on Leave_Entitlement__c
+- Continue BUILD tasks: replace sample addresses, test Journey Builder splits, finalize Basic Newsletter content
 
 **Checked live on 2026-10-14:** nothing — the status above is as recorded, not re-checked
 ### Last session — 2026-10-14
@@ -84,24 +83,29 @@
 | Type | BUILD |
 | Outcome | COMPLETED |
 | Branch | `main` |
-| Session | `c6d95fa0-1cc1-41d8-8801-5bdee6cafe57` |
+| Session | `9b7d39c9-0d43-41d4-b21e-f81bf48b101a` |
 **In its own words (excerpt):**
-I just checked again, and this session still has no Salesforce org connected.
+The org is connected, and I confirmed it with live queries, not just the CLI's connection status.
 
-| Check | Result |
+**Org: `orgfarm-232477b490-dev-ed`**
+
+| | |
 |---|---|
-| `sf org list` | **0 orgs**. The sandbox, non-scratch, scratch and Dev Hub lists are all empty. |
-| Default target org | **Not set**. The setting exists but has no value. |
+| Org name / ID | MAX · `00DjV000003BVbRUAW` |
+| Edition | Developer Edition, not a sandback (instance USA1336) |
+| API version | 68.0 |
+| Running user | John Steve (`johnsteve112345.c028eac59faf@agentforce.com`), System Administrator, active |
+| Status | Connected. This session's default org and its deploy target. |
 
-**What is connected in this session:**
-- **GitHub:** `john5143/johnson`, which I read from earlier in this session.
-- **Slack:** the Jaxconsulting workspace.
+**What's in it**
+- **Unmanaged custom objects (3):** `Employee_Leave__c`, `Leave_Entitlement__c`, `Leave_Holiday__c`
+- **Apex:** 12 unmanaged classes. They're mostly Trailhead-style (AccountProcessor, AnimalLocator, ParkLocator/ParkService and their tests), plus `ESA_RecordSearchAction` with its test. There are no custom triggers.
+- **Flows:** 1 active.
+- **Data:** 13 Accounts, 20 Contacts, 31 Opportunities.
+- **Licenses:** Salesforce 2 of 4 used, Salesforce Platform 0 of 6 used, Einstein Agent 0 of 201 used.
+- **Installed packages:** devedapp, ssot, cdpactvstrgptnr, and Revecast (listed twice). All are on free licenses.
 
-Nothing has changed since the earlier checks. The org is chosen when a session starts, so steveorg, JohnDev-Org and orgfarm-232477b490-dev-ed can't be added to this session.
+**Compared with the last session's notes:** the handoff file says no org could be connected, and 
 
-**To get one connected:**
-1. Go to the **Connectors** page and look under **Salesforce orgs** for the org you want. If it isn't there, connect it. If it's waiting for approval, a workspace owner or admin can approve it under **Approvals**.
-2. Start a **new** session with that org selected as the target org. Then I can run the `Available_Days__c` review.
-
-Sources: engagement context (none relied on) · checked live: Salesforce CLI (`sf org list`, `sf config get target-org`) · not checked: the Connectors page (I have no tool that can see it)
+_[summary truncated — see the session record for the full text]_
 <!-- orchestrate:session-state:end -->
