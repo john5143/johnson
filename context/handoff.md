@@ -42,11 +42,13 @@
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
 ### Engagement state — 2026-10-14
-**Status:** on track — Org connected (orgfarm-232477b490-dev-ed). BUILD tasks resume; Available_Days__c review unblocked.
+**Status:** at risk — Available_Days__c field exists but has no field-level access—blocks engine tests & queries. Fix proposed, awaiting decision.
 
 **Done this session**
-- Confirmed Salesforce org connection: orgfarm-232477b490-dev-ed (MAX, Dev Edition, John Steve user)
-- Verified org contains Leave_Entitlement__c custom object with Available_Days__c field
+- Diagnosed root cause: field re-created 2026-09-30 without field-level security grants
+- Confirmed field exists in metadata (00NjV00000atiQHUAY) but hidden from Describe, SOQL, and Apex queries
+- Identified permission set mismatch: branch includes grants, org deployment did not
+- Proposed safe correction: deploy field + permission sets together, assign to test user, re-run tests
 
 **Open items**
 - Preview Welcome Email - MCP_Test (34013) with row JMC-0004 to confirm banner and personalization render
@@ -69,14 +71,15 @@
 - Target org: orgfarm-232477b490-dev-ed (MAX Developer Edition)
 
 **Blockers**
+- Available_Days__c field has no field-level access—blocks engine tests (19/21 and 20/36 failures) and SOQL queries
 - Data Cloud tools unavailable—Revecast Orchestrate Connector package needs upgrade for missing scopes
 
 **Next**
-- Execute Preview & Test on Welcome Email - MCP_Test (34013) with row JMC-0004
-- Run Available_Days__c field access review on Leave_Entitlement__c
-- Continue BUILD tasks: replace sample addresses, test Journey Builder splits, finalize Basic Newsletter content
+- Decide whether to apply the proposed field-level access fix (validate, deploy, re-run LeaveBalanceEngineTest)
+- If approved: validate the deploy with engine tests before applying to orgfarm-232477b490-dev-ed
+- Resume BUILD tasks: Preview Welcome Email, test Journey Builder splits, finalize Basic Newsletter content
 
-**Checked live on 2026-10-14:** nothing — the status above is as recorded, not re-checked
+**Checked live on 2026-10-14:** the repository
 ### Last session — 2026-10-14
 | | |
 |---|---|
@@ -85,27 +88,18 @@
 | Branch | `main` |
 | Session | `9b7d39c9-0d43-41d4-b21e-f81bf48b101a` |
 **In its own words (excerpt):**
-The org is connected, and I confirmed it with live queries, not just the CLI's connection status.
+The field exists in the org, but no user has field-level access to it, so describe and SOQL can't see it. Nothing in the org or the repo was changed.
 
-**Org: `orgfarm-232477b490-dev-ed`**
+**1. Authentication.** There is no org with the alias `steveorg` (the CLI returns `NamedOrgNotFoundError: No authorization information found for steveorg`). The only authenticated org is `orgfarm-232477b490-dev-ed`. A live query confirmed it's connected, and its running user is John Steve, an active System Administrator, so I reviewed that org. If `steveorg` is meant to be a different org, it needs connecting first.
 
-| | |
+**2. The four checks**
+
+| Check | Result |
 |---|---|
-| Org name / ID | MAX · `00DjV000003BVbRUAW` |
-| Edition | Developer Edition, not a sandback (instance USA1336) |
-| API version | 68.0 |
-| Running user | John Steve (`johnsteve112345.c028eac59faf@agentforce.com`), System Administrator, active |
-| Status | Connected. This session's default org and its deploy target. |
-
-**What's in it**
-- **Unmanaged custom objects (3):** `Employee_Leave__c`, `Leave_Entitlement__c`, `Leave_Holiday__c`
-- **Apex:** 12 unmanaged classes. They're mostly Trailhead-style (AccountProcessor, AnimalLocator, ParkLocator/ParkService and their tests), plus `ESA_RecordSearchAction` with its test. There are no custom triggers.
-- **Flows:** 1 active.
-- **Data:** 13 Accounts, 20 Contacts, 31 Opportunities.
-- **Licenses:** Salesforce 2 of 4 used, Salesforce Platform 0 of 6 used, Einstein Agent 0 of 201 used.
-- **Installed packages:** devedapp, ssot, cdpactvstrgptnr, and Revecast (listed twice). All are on free licenses.
-
-**Compared with the last session's notes:** the handoff file says no org could be connected, and 
+| Branch `sprint2-leave-balance` | Formula field: `Entitled + Carry_Forward − Used − Pending`, blanks treated as zero. The admin and engine permission sets both grant it read-only. The field file comes from commit `e4fe695`, which is `main`'s latest commit, so the branch and `main` match. |
+| Metadata API / Tooling API | ✅ Field exists (`00NjV00000atiQHUAY`) with the same formula, created 2026-09-30 16:41:23. |
+| sObject Describe and FieldDefinition | ❌ The field is missing. The other 8 custom fields show up. |
+| SOQL | ❌ `INVALID_FIELD: No such column 'Available_Days_
 
 _[summary truncated — see the session record for the full text]_
 <!-- orchestrate:session-state:end -->
