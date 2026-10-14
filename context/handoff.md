@@ -42,7 +42,7 @@
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
 ### Engagement state — 2026-10-14
-**Status:** blocked — BUILD complete; no Salesforce org connected to session. Cannot proceed with field access or email testing.
+**Status:** blocked — BUILD complete; no Salesforce org connected. Tried steveorg, JohnDev-Org, orgfarm-232477b490-dev-ed—all failed.
 
 **Done this session**
 - None
@@ -68,11 +68,11 @@
 - Halt diagnosis if either steveorg or GitHub connection fails
 
 **Blockers**
-- No Salesforce org connected to this session—sf org list returns 0 orgs, no default target org set. Both steveorg and JohnDev-Org failed to connect.
+- No Salesforce org connected to this session—sf org list returns 0 orgs. steveorg, JohnDev-Org, and orgfarm-232477b490-dev-ed all failed to connect.
 
 **Next**
-- Verify steveorg and JohnDev-Org appear on Connectors page under Salesforce orgs; reconnect if missing or awaiting approval
-- Start new session with steveorg or JohnDev-Org selected as target org
+- On Connectors page under Salesforce orgs, verify steveorg, JohnDev-Org, and orgfarm-232477b490-dev-ed are listed and approved
+- Start new session with one of these orgs selected as target org
 - Run Available_Days__c field access review in connected org session
 - Execute Preview & Test on Welcome Email - MCP_Test (34013) with row JMC-0004
 - Send test of Welcome Email to nagaruri.johnson@jaxconsult.com and check send log
@@ -86,18 +86,21 @@
 | Branch | `main` |
 | Session | `c6d95fa0-1cc1-41d8-8801-5bdee6cafe57` |
 **In its own words (excerpt):**
-JohnDev-Org isn't connected to this session. No Salesforce org is.
+orgfarm-232477b490-dev-ed isn't connected to this session either. I checked it under both its alias and its full My Domain name:
 
 | Check | Result |
 |---|---|
-| `sf org display --target-org JohnDev-Org` | `NamedOrgNotFoundError: No authorization information found for JohnDev-Org.` |
-| `sf org list` | **0 orgs.** There are no sandboxes, scratch orgs or Dev Hubs, and no other orgs either. |
+| `sf org display --target-org orgfarm-232477b490-dev-ed` | `NamedOrgNotFoundError: No authorization information found for orgfarm-232477b490-dev-ed.` |
+| `sf org display --target-org orgfarm-232477b490-dev-ed.develop.my.salesforce.com` | `NamedOrgNotFoundError`, the same error |
+| `sf org list` | **0 orgs** |
 
-steveorg failed the same way earlier. No org was chosen when this session started, so asking for a different org by name doesn't change anything.
+This is the same reason steveorg and JohnDev-Org failed. No Salesforce org was selected when this session started, and you can't attach one partway through. Trying another org name in this session will give the same result.
 
-**To use JohnDev-Org:**
-1. Go to the **Connectors** page and look under **Salesforce orgs** for JohnDev-Org. If it isn't listed, connect it. If it's listed but waiting for approval, a workspace owner or admin can approve it under **Approvals**.
-2. Start a **new** session and pick JohnDev-Org as the target org. You can't add an org to a session that's already running.
+**To use orgfarm-232477b490-dev-ed:**
+1. On the **Connectors** page under **Salesforce orgs**, check that this org is listed. If it isn't, connect it. If it's waiting for approval, a workspace owner or admin can approve it under **Approvals**.
+2. Start a **new** session and select it as the target org. If you'd like, paste in the `Available_Days__c` review request from earlier and I'll run it there.
 
-Sources: engagement context (none relied on) · checked live: Salesforce CLI (`sf org list`, `sf org display` for JohnDev-Org) · not checked: the Connectors page (I don't have a tool that can see it)
+Sources: engagement context (none relied on) · checked live: Salesforce CLI (`sf org list`, `sf org
+
+_[summary truncated — see the session record for the full text]_
 <!-- orchestrate:session-state:end -->
