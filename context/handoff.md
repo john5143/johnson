@@ -42,22 +42,22 @@
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
 ### Engagement state — 2026-10-14
-**Status:** blocked — Preconditions failed: no org connected, wrong branch. Repo audit complete; LeaveBalanceServiceTest still missing.
+**Status:** blocked — Preconditions still fail (no org, wrong branch). Root cause found: LeaveBalanceService user-mode query causes rollup undercount. Ready to f…
 
 **Done this session**
-- Confirmed sprint2-leave-balance branch exists at 82456e3 with 5 of 6 required Apex classes
-- Verified LeaveBalanceServiceTest absent from repo and all commit history
-- Checked Salesforce CLI auth state: no org logged in, no default environment
+- Identified rollup undercount root cause: user-mode query in with-sharing class limits totals to visible rows only
+- Documented fix: move totals query to without-sharing rollup service, run WITH SYSTEM_MODE
+- Confirmed LeaveBalanceServiceTest still missing from sprint2-leave-balance at 82456e3
 
 **Open items**
-- Write LeaveBalanceServiceTest covering snapshot read, balance key, off switch, employee-user context tests
-- Connect org orgfarm-232477b490-dev-ed (00DjV000003BVbRUAW) to next session
-- Set sprint2-leave-balance as working branch for next session
-- Validate with: sf project deploy validate --source-dir force-app --test-level RunSpecifiedTests --tests LeaveBalanceEngineTest LeaveBalanceServiceTest
-- Re-run LeaveBalanceEngineTest (19/21, 20/36 failures) once Apex classes deployed to org
-- Preview Welcome Email - MCP_Test (34013) with row JMC-0004
-- Send test of Welcome Email to nagaruri.johnson@jaxconsult.com
-- Replace three remaining *.sample@example.com addresses in John_Mike_Customers (JMC-0001, 0002, 0003, 0005)
+- Write LeaveBalanceServiceTest covering BalanceKey, keyFor(), computeTotals(), getEntitlementSnapshot(), user-visibility undercount case, off switch, handler re-run guard, 20+ bulk records
+- Move totals query from LeaveBalanceService into LeaveBalanceRollupService, run WITH SYSTEM_MODE
+- Add FOR UPDATE lock to balance records before totalling to prevent concurrent-save overwrites
+- Document computeTotals() as read-only for user-facing screens, not for writes
+- Validate: sf project deploy validate --source-dir force-app --test-level RunSpecifiedTests --tests LeaveBalanceEngineTest LeaveBalanceServiceTest
+- Check org: Employee_Leave__c sharing model and whether Total_Days__c is a formula field
+- Confirm business rule: leave crossing year boundary counts entirely against start year
+- Connect org orgfarm-232477b490-dev-ed (00DjV000003BVbRUAW) and set sprint2-leave-balance as working branch
 
 **Decisions**
 - Deploy permission set from org copy (not GitHub file) to preserve all existing grants
@@ -66,18 +66,20 @@
 - Engagement Split added to Has Bio path; wait set to 2 days for open window
 - Random Split (50/50) added to Opened path with Variant A and Variant B emails
 - Welcome Email subject uses %%FirstName%% with no fallback; greeting inside has fallback 'Hi there'
+- Totals query must run in system mode inside without-sharing rollup service, not in with-sharing service
 
 **Blockers**
-- No Salesforce org connected—session started with no default environment; validation requires 00DjV000003BVbRUAW attached
+- No Salesforce org connected—validation requires 00DjV000003BVbRUAW attached
 - Working branch is main, not sprint2-leave-balance—branch selection is set at session start
 - LeaveBalanceServiceTest class missing from sprint2-leave-balance—cannot validate without it
-- LeaveBalanceEngine Apex classes not yet deployed to org—cannot re-run tests to confirm field access resolves failures
 
 **Next**
 - Start new BUILD session with org orgfarm-232477b490-dev-ed (00DjV000003BVbRUAW) connected and sprint2-leave-balance as working branch
-- Write LeaveBalanceServiceTest or confirm if it exists elsewhere in the org
+- Move computeTotals() query into LeaveBalanceRollupService, run WITH SYSTEM_MODE
+- Add FOR UPDATE lock to balance records before totalling
+- Write LeaveBalanceServiceTest with all required coverage (BalanceKey, keyFor, computeTotals, getEntitlementSnapshot, user-visibility case, off switch, handler guard, 20+ bulk records)
 - Run validation: sf project deploy validate --source-dir force-app --test-level RunSpecifiedTests --tests LeaveBalanceEngineTest LeaveBalanceServiceTest
-- Once validation passes, deploy Apex classes and re-run LeaveBalanceEngineTest to confirm Available_Days__c access resolves failures
+- Check org for Employee_Leave__c sharing model and Total_Days__c field type
 
 **Checked live on 2026-10-14:** the repository
 ### Last session — 2026-10-14
@@ -86,26 +88,24 @@
 | Type | BUILD |
 | Outcome | COMPLETED |
 | Branch | `main` |
-| Session | `191892a7-fb48-4a29-9cb9-e09c7d97e80e` |
+| Session | `d168f70a-68c2-492d-9a55-72095a048249` |
 **In its own words (excerpt):**
-I stopped at the preconditions: both of them failed. I haven't changed, committed or deployed anything, and I didn't write any test code, because I can't validate it in this session.
+I stopped at the preconditions again, because both still fail. I haven't edited, created, validated, committed or deployed anything. I did a read-only review of the branch and found the cause of the undercount.
 
 ## Precondition results
 
 | Check | Expected | Actual | Result |
 |---|---|---|---|
-| Authenticated org | `00DjV000003BVbRUAW` | **No org logged in.** `sf org list` came back empty and `sf org display` returned `NoDefaultEnvError: No default environment found.` | ❌ Fail |
-| Working branch | `sprint2-leave-balance` | **This session is pinned to `main`.** `sprint2-leave-balance` exists on the remote (`82456e3`). | ❌ Fail |
+| Org | `00DjV000003BVbRUAW` | No org is logged in. `sf org list` is empty and `sf org display` returns `NoDefaultEnvError` | ❌ Fail |
+| Working branch | `sprint2-leave-balance` | This session is pinned to `main`. `sprint2-leave-balance` exists on the remote at `82456e3` | ❌ Fail |
 
-Neither can be fixed from inside this session. The org and the working branch are both set when a session starts.
+This is the same result as the last session. Both the org and the branch are fixed when a session starts, so I can't change either from here. Without an org, check-only validation can't run.
 
-## What I checked on the branch (read-only)
+## Why the rollup undercounts
 
-The branch is at `82456e3`, the same commit the last session audited. It has `EmployeeLeave_TriggerHandler`, `LeaveBalanceService`, `LeaveBalanceRollupService`, `LeaveBalanceException` and `LeaveBalanceEngineTest`. **`LeaveBalanceServiceTest` is still missing.** The `EmployeeLeaveTrigger` trigger was reported present last session; I listed only the classes folder this time, so I didn't recheck it.
+`LeaveBalanceRollupService` is `without sharing` and writes `Used_Days__c` and `Pending_Days__c` in system mode. But it gets its totals from `LeaveBalanceService.computeTotals()`, which is `with sharing` and runs the aggregate `WITH USER_MODE`. So the totals only include the leave rows the person saving can see, and those partial totals then overwrite the stored balance.
 
-## To unblock
-
-Start a new **B
+- **Example:** a manager
 
 _[summary truncated — see the session record for the full text]_
 <!-- orchestrate:session-state:end -->
