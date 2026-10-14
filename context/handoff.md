@@ -42,75 +42,66 @@
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
 ### Engagement state — 2026-10-14
-**Status:** on track — Permission set deployed successfully with Available_Days__c read grant. Engine tests pending—classes not yet in org.
+**Status:** blocked — LeaveBalanceServiceTest missing from repo; no org connected to validate. Cannot proceed with deployment.
 
 **Done this session**
-- Deployed Leave_Balance_Engine permission set (0AfjV0000040fAZSAY) with Available_Days__c read grant to orgfarm-232477b490-dev-ed
-- Confirmed John Steve assigned to permission set and has read access to Available_Days__c
-- Validated SOQL query runs without INVALID_FIELD error (0 records in Leave_Entitlement__c)
+- Audited sprint2-leave-balance branch: 5 of 6 required Apex classes present
+- Identified LeaveBalanceServiceTest does not exist in repo or any commit history
+- Confirmed Employee_Leave__c object and field dependencies exist only in org, not in repo
+- Documented code-review findings: snapshot method untested, permission visibility gap in rollup logic, test setup runs before Test.stopTest()
 
 **Open items**
+- Write LeaveBalanceServiceTest covering snapshot read, balance key, off switch, employee-user context tests
+- Connect org orgfarm-232477b490-dev-ed (00DjV000003BVbRUAW) to next session
+- Set sprint2-leave-balance as working branch (session pinned to main)
+- Validate with: sf project deploy validate --source-dir force-app --test-level RunSpecifiedTests --tests LeaveBalanceEngineTest LeaveBalanceServiceTest
 - Re-run LeaveBalanceEngineTest (19/21, 20/36 failures) once Apex classes deployed to org
-- Preview Welcome Email - MCP_Test (34013) with row JMC-0004 to confirm banner and personalization
-- Send test of Welcome Email to nagaruri.johnson@jaxconsult.com to verify subject, preheader, image
+- Preview Welcome Email - MCP_Test (34013) with row JMC-0004
+- Send test of Welcome Email to nagaruri.johnson@jaxconsult.com
 - Replace three remaining *.sample@example.com addresses in John_Mike_Customers (JMC-0001, 0002, 0003, 0005)
-- Open John_Mike_JB_Test in Journey Builder and visually confirm Random Split and variant emails on Opened branch
-- Define what step follows Not Opened path on Engagement Split (currently ends journey)
-- Run manual test in Journey Builder with 4 test contacts from John_Mike_Bio_Split_Test
-- Replace all placeholder links and text in Basic Newsletter email
 
 **Decisions**
-- Deploy permission set from org copy (not GitHub file) to preserve all existing grants and org-only settings
-- Precision difference (18 vs 8 digits) deferred; decide before deploying GitHub field file as-is
-- Welcome Banner - Image Block created as reusable block (34027) in MCP_Test folder, linked not copied
-- Global Footer block created in MCP_Test (not yet moved to Shared Content)
+- Deploy permission set from org copy (not GitHub file) to preserve all existing grants
+- Precision difference (18 vs 8 digits) deferred; decide before deploying GitHub field file
+- Welcome Banner - Image Block created as reusable block (34027), linked not copied
 - Engagement Split added to Has Bio path; wait set to 2 days for open window
 - Random Split (50/50) added to Opened path with Variant A and Variant B emails
 - Welcome Email subject uses %%FirstName%% with no fallback; greeting inside has fallback 'Hi there'
-- Target org: orgfarm-232477b490-dev-ed (MAX Developer Edition, ID 00DjV000003BVbRUAW)
 
 **Blockers**
-- LeaveBalanceEngine Apex classes not yet deployed to org—cannot re-run tests to confirm field access resolves 19/21 and 20/36 failures
+- LeaveBalanceServiceTest class missing from sprint2-leave-balance branch—cannot validate without it
+- No Salesforce org connected to this session—validation requires org 00DjV000003BVbRUAW attached
+- LeaveBalanceEngine Apex classes not yet deployed to org—cannot re-run tests to confirm field access resolves failures
 - Data Cloud tools unavailable—Revecast Orchestrate Connector package needs upgrade for missing scopes
 
 **Next**
-- Deploy LeaveBalanceEngine Apex classes to orgfarm-232477b490-dev-ed
-- Re-run LeaveBalanceEngineTest to confirm Available_Days__c field access resolves test failures
-- Resume BUILD: Preview Welcome Email, test Journey Builder splits, finalize Basic Newsletter content
+- Start new session with org orgfarm-232477b490-dev-ed connected and sprint2-leave-balance as working branch
+- Write LeaveBalanceServiceTest (snapshot, balance key, off switch, employee-user tests) or confirm if it exists elsewhere
+- Run validation: sf project deploy validate --source-dir force-app --test-level RunSpecifiedTests --tests LeaveBalanceEngineTest LeaveBalanceServiceTest
+- Once validation passes, deploy Apex classes and re-run LeaveBalanceEngineTest to confirm Available_Days__c access resolves 19/21 and 20/36 failures
 
-**Checked live on 2026-10-14:** nothing — the status above is as recorded, not re-checked
+**Checked live on 2026-10-14:** the repository
 ### Last session — 2026-10-14
 | | |
 |---|---|
 | Type | BUILD |
 | Outcome | COMPLETED |
 | Branch | `main` |
-| Session | `9b7d39c9-0d43-41d4-b21e-f81bf48b101a` |
+| Name | sprint2-leave-balance |
+| Session | `2669e58c-d81c-4a11-8d1f-9efd169987d0` |
 **In its own words (excerpt):**
-━━ Build status (auto-checked from tool results — deploy = sf CLI exit, not runtime effect) ━━
-• Code committed: no
-• Pushed to GitHub: no
-• Validated (sf deploy validate): yes
-• Deployed to org: yes — orgfarm-232477b490-dev-ed
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+I stopped before validating. Two things block it: the required test class `LeaveBalanceServiceTest` is missing from the branch, and no Salesforce org is connected to this session. No tests were run, so I have no pass/fail results or coverage numbers to report. Nothing was committed, deployed, or changed in the org, and I didn't touch the field or the permission sets.
 
-The fix is deployed and every check passed. John Steve can now read `Available_Days__c` but not edit it, and the SOQL query runs without error. The object has no records yet, though, so the query returned 0 rows.
+## Why I stopped
 
-**Deployment**
+1. **The test class isn't there.** `LeaveBalanceServiceTest` doesn't exist on `sprint2-leave-balance` (latest commit `82456e3`). It isn't in any earlier commit on any branch either, and no file in the repo refers to it. It has never been written. I didn't write it, because you asked me to stop if a test class was missing.
+2. **No org is connected.** The session started with no Salesforce org attached, and the Salesforce CLI shows no logged-in orgs. A validation run needs an org to run against. To validate `00DjV000003BVbRUAW`, start a new session with that org (`orgfarm-232477b490-dev-ed`) picked on the new-session form.
 
-| | |
-|---|---|
-| Org | `orgfarm-232477b490-dev-ed`, ID `00DjV000003BVbRUAW` (re-checked before deploying) |
-| Deployment ID | **`0AfjV0000040fAZSAY`** |
-| Result | Succeeded: 1 component deployed (`Leave_Balance_Engine`, updated), 0 errors |
-| What was deployed | The same package that passed validation. It matched the org's copy except for the one new grant, and the permission set hadn't changed in the org since validation. |
-| Tests | None run. The package contains no Apex. |
+## What's on the branch
 
-**Checks**
-
-| Check | Result |
-|---|---|
-| Grant on the permission set | ✅ `Leave_Entitlement__c.Available_Days__c`: read yes, edit no. The set now has 14 field grants (13 before). Its object access is unchang
+| Item | Present | Notes |
+|---|---|---|
+| `EmployeeLeaveTrigger` (trigger) | ✅ | Only trigger on the object; contains no logic; runs after insert/update/de
 
 _[summary truncated — see the session record for the full text]_
 <!-- orchestrate:session-state:end -->
