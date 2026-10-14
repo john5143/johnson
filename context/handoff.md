@@ -42,7 +42,7 @@
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
 ### Engagement state — 2026-10-14
-**Status:** blocked — BUILD complete; steveorg still unreachable. No org connected to this session—cannot verify field access.
+**Status:** blocked — BUILD complete; no Salesforce org connected to session. Cannot proceed with field access or email testing.
 
 **Done this session**
 - None
@@ -68,12 +68,12 @@
 - Halt diagnosis if either steveorg or GitHub connection fails
 
 **Blockers**
-- steveorg not connected to this session—sf org list returns 0 orgs, no default target org set
+- No Salesforce org connected to this session—sf org list returns 0 orgs, no default target org set. Both steveorg and JohnDev-Org failed to connect.
 
 **Next**
-- Verify steveorg appears on Connectors page under Salesforce orgs; reconnect if missing or awaiting approval
-- Start new session with steveorg selected as target org
-- Run Available_Days__c field access review in steveorg session
+- Verify steveorg and JohnDev-Org appear on Connectors page under Salesforce orgs; reconnect if missing or awaiting approval
+- Start new session with steveorg or JohnDev-Org selected as target org
+- Run Available_Days__c field access review in connected org session
 - Execute Preview & Test on Welcome Email - MCP_Test (34013) with row JMC-0004
 - Send test of Welcome Email to nagaruri.johnson@jaxconsult.com and check send log
 
@@ -86,25 +86,18 @@
 | Branch | `main` |
 | Session | `c6d95fa0-1cc1-41d8-8801-5bdee6cafe57` |
 **In its own words (excerpt):**
-No Salesforce org is connected to this session. I just checked:
+JohnDev-Org isn't connected to this session. No Salesforce org is.
 
 | Check | Result |
 |---|---|
-| `sf org list` | **0 orgs**. Every category (sandboxes, non-scratch, scratch, Dev Hubs) is empty. |
-| Default target org (`sf config get target-org`) | **Not set**. |
-| `sf org display` (default org) | `NoDefaultEnvError: No default environment found.` |
+| `sf org display --target-org JohnDev-Org` | `NamedOrgNotFoundError: No authorization information found for JohnDev-Org.` |
+| `sf org list` | **0 orgs.** There are no sandboxes, scratch orgs or Dev Hubs, and no other orgs either. |
 
-The session also lists no org: no org was picked when it started. That's why steveorg, and every other org, is unavailable here.
+steveorg failed the same way earlier. No org was chosen when this session started, so asking for a different org by name doesn't change anything.
 
-**What is connected:**
-- **GitHub**: `john5143/johnson`, which I could read from earlier in this session.
-- **Slack**: the Jaxconsulting workspace.
+**To use JohnDev-Org:**
+1. Go to the **Connectors** page and look under **Salesforce orgs** for JohnDev-Org. If it isn't listed, connect it. If it's listed but waiting for approval, a workspace owner or admin can approve it under **Approvals**.
+2. Start a **new** session and pick JohnDev-Org as the target org. You can't add an org to a session that's already running.
 
-**To connect steveorg:** you choose the org when you start a session, so you can't add one to a session that's already running.
-1. Check that steveorg appears on the **Connectors** page under **Salesforce orgs**. If it isn't there, connect it again. If it's waiting for approval, a workspace owner or admin approves it under **Approvals**.
-2. Start a new session with steveorg selected as the target org, then run the `Available_Days__c` review there.
-
-Sources: engagement context (none relied on) · checked live: Salesforce CLI org list, the default target org setting 
-
-_[summary truncated — see the session record for the full text]_
+Sources: engagement context (none relied on) · checked live: Salesforce CLI (`sf org list`, `sf org display` for JohnDev-Org) · not checked: the Connectors page (I don't have a tool that can see it)
 <!-- orchestrate:session-state:end -->
