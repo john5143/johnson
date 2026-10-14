@@ -42,44 +42,44 @@
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
 ### Engagement state — 2026-10-14
-**Status:** blocked — Preconditions still fail (no org, wrong branch). Root cause found: LeaveBalanceService user-mode query causes rollup undercount. Ready to f…
+**Status:** on track — Rollup fix validated (49/49 tests pass). Ready to commit, PR, and deploy.
 
 **Done this session**
-- Identified rollup undercount root cause: user-mode query in with-sharing class limits totals to visible rows only
-- Documented fix: move totals query to without-sharing rollup service, run WITH SYSTEM_MODE
-- Confirmed LeaveBalanceServiceTest still missing from sprint2-leave-balance at 82456e3
+- Moved totals query into LeaveBalanceRollupService, runs WITH SYSTEM_MODE
+- Added FOR UPDATE lock to balance records before totalling
+- Wrote LeaveBalanceServiceTest (22 tests) covering BalanceKey, keyFor, computeTotals, getEntitlementSnapshot, user-visibility, off switch, handler guard, 200 records
+- Added 5 new tests to LeaveBalanceEngineTest (year boundary, delete, edit, 200 records)
+- Achieved 100% coverage on service, rollup, handler, trigger
+- Check-only validation passed: 49/49 tests, validation ID 0AfjV0000041E9tSAE
+- Fixed real save failure: employee with read-only balance access can now save leave
 
 **Open items**
-- Write LeaveBalanceServiceTest covering BalanceKey, keyFor(), computeTotals(), getEntitlementSnapshot(), user-visibility undercount case, off switch, handler re-run guard, 20+ bulk records
-- Move totals query from LeaveBalanceService into LeaveBalanceRollupService, run WITH SYSTEM_MODE
-- Add FOR UPDATE lock to balance records before totalling to prevent concurrent-save overwrites
-- Document computeTotals() as read-only for user-facing screens, not for writes
-- Validate: sf project deploy validate --source-dir force-app --test-level RunSpecifiedTests --tests LeaveBalanceEngineTest LeaveBalanceServiceTest
-- Check org: Employee_Leave__c sharing model and whether Total_Days__c is a formula field
+- Delete LeaveBalanceException or put it to use (0% coverage blocks deploy)
 - Confirm business rule: leave crossing year boundary counts entirely against start year
-- Connect org orgfarm-232477b490-dev-ed (00DjV000003BVbRUAW) and set sprint2-leave-balance as working branch
+- Commit to sprint2-leave-balance
+- Open pull request
+- Run Deploy session to ship to org
 
 **Decisions**
-- Deploy permission set from org copy (not GitHub file) to preserve all existing grants
+- Totals query must run in system mode inside without-sharing rollup service
+- Balance records locked before totalling to prevent concurrent-save overwrites
+- computeTotals() and getEntitlementSnapshot() documented as read-only for screens only
+- Undercount risk closed by design (system-mode query) rather than test reproduction
+- Deploy permission set from org copy (not GitHub file) to preserve existing grants
 - Precision difference (18 vs 8 digits) deferred; decide before deploying GitHub field file
 - Welcome Banner - Image Block created as reusable block (34027), linked not copied
 - Engagement Split added to Has Bio path; wait set to 2 days for open window
-- Random Split (50/50) added to Opened path with Variant A and Variant B emails
-- Welcome Email subject uses %%FirstName%% with no fallback; greeting inside has fallback 'Hi there'
-- Totals query must run in system mode inside without-sharing rollup service, not in with-sharing service
 
 **Blockers**
-- No Salesforce org connected—validation requires 00DjV000003BVbRUAW attached
-- Working branch is main, not sprint2-leave-balance—branch selection is set at session start
-- LeaveBalanceServiceTest class missing from sprint2-leave-balance—cannot validate without it
+- LeaveBalanceException has 0% coverage and blocks deploy—must delete or put to use
 
 **Next**
-- Start new BUILD session with org orgfarm-232477b490-dev-ed (00DjV000003BVbRUAW) connected and sprint2-leave-balance as working branch
-- Move computeTotals() query into LeaveBalanceRollupService, run WITH SYSTEM_MODE
-- Add FOR UPDATE lock to balance records before totalling
-- Write LeaveBalanceServiceTest with all required coverage (BalanceKey, keyFor, computeTotals, getEntitlementSnapshot, user-visibility case, off switch, handler guard, 20+ bulk records)
-- Run validation: sf project deploy validate --source-dir force-app --test-level RunSpecifiedTests --tests LeaveBalanceEngineTest LeaveBalanceServiceTest
-- Check org for Employee_Leave__c sharing model and Total_Days__c field type
+- Delete or implement LeaveBalanceException
+- Confirm year-boundary business rule with stakeholder
+- Commit changes to sprint2-leave-balance
+- Open pull request for review
+- Merge to main after approval
+- Start Deploy session to ship to org 00DjV000003BVbRUAW
 
 **Checked live on 2026-10-14:** the repository
 ### Last session — 2026-10-14
@@ -87,25 +87,26 @@
 |---|---|
 | Type | BUILD |
 | Outcome | COMPLETED |
-| Branch | `main` |
-| Session | `d168f70a-68c2-492d-9a55-72095a048249` |
+| Branch | `sprint2-leave-balance` |
+| Name | Sprint 2 - Leave Balance Engine |
+| Session | `081c15c1-bec7-44fc-b80c-04d3fd222930` |
 **In its own words (excerpt):**
-I stopped at the preconditions again, because both still fail. I haven't edited, created, validated, committed or deployed anything. I did a read-only review of the branch and found the cause of the undercount.
+━━ Build status (auto-checked from tool results — deploy = sf CLI exit, not runtime effect) ━━
+• Code committed: no
+• Pushed to GitHub: no
+• Validated (sf deploy validate): yes
+• Deployed to org: NO — not deployed to any org
+Next: open/refresh the PR → review → merge to main → run a Deploy session to ship. This work is NOT live yet.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-## Precondition results
+The rollup fix is in and check-only validation passed: 49 of 49 tests, and validation ID `0AfjV0000041E9tSAE`. Nothing was deployed, committed, pushed or merged, and no field metadata was touched. The changes exist only in this session's local copy of the branch.
 
-| Check | Expected | Actual | Result |
-|---|---|---|---|
-| Org | `00DjV000003BVbRUAW` | No org is logged in. `sf org list` is empty and `sf org display` returns `NoDefaultEnvError` | ❌ Fail |
-| Working branch | `sprint2-leave-balance` | This session is pinned to `main`. `sprint2-leave-balance` exists on the remote at `82456e3` | ❌ Fail |
+**Preconditions: both passed.** The org ID is `00DjV000003BVbRUAW`. The branch is `sprint2-leave-balance` at `82456e3`, level with `main`.
 
-This is the same result as the last session. Both the org and the branch are fixed when a session starts, so I can't change either from here. Without an org, check-only validation can't run.
-
-## Why the rollup undercounts
-
-`LeaveBalanceRollupService` is `without sharing` and writes `Used_Days__c` and `Pending_Days__c` in system mode. But it gets its totals from `LeaveBalanceService.computeTotals()`, which is `with sharing` and runs the aggregate `WITH USER_MODE`. So the totals only include the leave rows the person saving can see, and those partial totals then overwrite the stored balance.
-
-- **Example:** a manager
+**The fix** (in `LeaveBalanceRollupService`):
+- **Totals:** the rollup now totals every Approved and Pending leave row itself, in system mode. Before, it took them from `LeaveBalanceService.computeTotals()`, which only counts what the person saving can see.
+- **Locking:** the balance rows are locked before totalling, so two saves at once can't overwrite each other.
+- **Writing:** the balance update is now ex
 
 _[summary truncated — see the session record for the full text]_
 <!-- orchestrate:session-state:end -->
