@@ -41,11 +41,11 @@
 <!-- orchestrate:session-state:start -->
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
-### Engagement state — 2026-10-13
-**Status:** blocked — BUILD: Email content complete; steveorg unreachable again—cannot verify field access. Awaiting admin reconnection.
+### Engagement state — 2026-10-14
+**Status:** blocked — BUILD: Email content complete; steveorg unreachable—cannot verify field access. Awaiting admin reconnection.
 
 **Done this session**
-- Confirmed steveorg still unavailable—halted diagnosis as instructed
+- None
 
 **Open items**
 - Preview Welcome Email - MCP_Test (34013) with row JMC-0004 to confirm banner and personalization render
@@ -69,11 +69,6 @@
 
 **Blockers**
 - steveorg not reachable—NamedOrgNotFoundError, no Salesforce org signed in; sf org list returns 0 orgs
-- Banner render not yet previewed—use Preview & Test with row JMC-0004 to confirm
-- Canvas visual confirmation not yet done—Random Split appearance on Opened branch unconfirmed
-- Test data lacks LoyaltyTier field—emails will show fallback text 'Member' for all contacts
-- Global Footer address will not render if account sender details are blank (CAN-SPAM compliance risk)
-- No real send executed yet—test sends needed to generate trackable metrics
 
 **Next**
 - Have Salesforce admin connect or re-authorize steveorg under Setup → Revecast Orchestrate → Connected Orgs and click Test Connection
@@ -81,29 +76,26 @@
 - Execute Preview & Test on Welcome Email - MCP_Test (34013) with row JMC-0004 to confirm banner renders
 - Send test of Welcome Email to nagaruri.johnson@jaxconsult.com and check send log for delivery and tracking
 
-**Checked live on 2026-10-13:** the repository
-### Last session — 2026-10-13
+**Checked live on 2026-10-14:** the repository
+### Last session — 2026-10-14
 | | |
 |---|---|
 | Type | BUILD |
 | Outcome | COMPLETED |
 | Branch | `main` |
-| Session | `022a685d-e9fc-4203-8482-1fa67d6c5dd0` |
+| Session | `c6d95fa0-1cc1-41d8-8801-5bdee6cafe57` |
 **In its own words (excerpt):**
-I stopped again: **steveorg still isn't reachable**, so I didn't run any of the diagnosis. Nothing has changed since the last attempt in this session.
+I checked the steveorg connection first, and it isn't available, so I stopped there. I didn't run any of the org checks: Metadata API, sObject Describe, SOQL queryability or field-level security.
 
 | Connection | Result |
 |---|---|
-| **steveorg** (Salesforce) | ❌ Not available. `sf org display --target-org steveorg` returned `NamedOrgNotFoundError: No authorization information found for steveorg.` `sf org list` came back with **0 orgs**, so no Salesforce org is signed in for this session at all. |
-| **`sprint2-leave-balance`** (GitHub, `john5143/johnson`) | ✅ Available. The branch is still at commit `82456e3`. |
+| **steveorg** (Salesforce) | ❌ Not available. `sf org display --target-org steveorg` returned `NamedOrgNotFoundError: No authorization information found for steveorg.` `sf org list` returned **0 orgs**, so this session has no Salesforce org connected at all. |
+| **`sprint2-leave-balance`** (GitHub, `john5143/johnson`) | ✅ Available. The branch still points to commit `82456e3`, the same as last session. |
 
-I made no changes and didn't check field metadata, Describe, SOQL or FLS.
+I can't tell you the root cause of the `Available_Days__c` problem without the org. Every check you asked for compares the org against the branch, and I can only see the branch. I made no changes.
 
-**Re-running this in the same session won't help.** The org connection is fixed when a session starts, so it can't be added partway through. To unblock:
-1. Have a Salesforce admin connect or re-authorize steveorg under **Setup → Revecast Orchestrate → Connected Orgs**, then click **Test Connection**.
-2. Start a **new** session with steveorg as the target org and paste in this same request.
-
-If you'd like, I can do a read-only review of how `Available_Days__c` is defined on `sprint2-leave-balance` in the meantime. That covers the field type, whe
+**Running this again in this session won't help.** The org is fixed when a session starts and can't be added partway through. To unblock it:
+1. Have a Salesforce admin connect steveorg again, or reconnect it, from the **Connectors** page under **Salesforce orgs**. If it doesn't appear on the new-session form afterwards, a workspace owner or admin may need to 
 
 _[summary truncated — see the session record for the full text]_
 <!-- orchestrate:session-state:end -->
