@@ -42,18 +42,17 @@
 <!-- Written by Orchestrate at the end of each session. Edits inside this block are
      replaced next session; anything OUTSIDE it is yours and is never touched. -->
 ### Engagement state — 2026-10-14
-**Status:** blocked — LeaveBalanceServiceTest missing from repo; no org connected to validate. Cannot proceed with deployment.
+**Status:** blocked — Preconditions failed: no org connected, wrong branch. Repo audit complete; LeaveBalanceServiceTest still missing.
 
 **Done this session**
-- Audited sprint2-leave-balance branch: 5 of 6 required Apex classes present
-- Identified LeaveBalanceServiceTest does not exist in repo or any commit history
-- Confirmed Employee_Leave__c object and field dependencies exist only in org, not in repo
-- Documented code-review findings: snapshot method untested, permission visibility gap in rollup logic, test setup runs before Test.stopTest()
+- Confirmed sprint2-leave-balance branch exists at 82456e3 with 5 of 6 required Apex classes
+- Verified LeaveBalanceServiceTest absent from repo and all commit history
+- Checked Salesforce CLI auth state: no org logged in, no default environment
 
 **Open items**
 - Write LeaveBalanceServiceTest covering snapshot read, balance key, off switch, employee-user context tests
 - Connect org orgfarm-232477b490-dev-ed (00DjV000003BVbRUAW) to next session
-- Set sprint2-leave-balance as working branch (session pinned to main)
+- Set sprint2-leave-balance as working branch for next session
 - Validate with: sf project deploy validate --source-dir force-app --test-level RunSpecifiedTests --tests LeaveBalanceEngineTest LeaveBalanceServiceTest
 - Re-run LeaveBalanceEngineTest (19/21, 20/36 failures) once Apex classes deployed to org
 - Preview Welcome Email - MCP_Test (34013) with row JMC-0004
@@ -69,16 +68,16 @@
 - Welcome Email subject uses %%FirstName%% with no fallback; greeting inside has fallback 'Hi there'
 
 **Blockers**
-- LeaveBalanceServiceTest class missing from sprint2-leave-balance branch—cannot validate without it
-- No Salesforce org connected to this session—validation requires org 00DjV000003BVbRUAW attached
+- No Salesforce org connected—session started with no default environment; validation requires 00DjV000003BVbRUAW attached
+- Working branch is main, not sprint2-leave-balance—branch selection is set at session start
+- LeaveBalanceServiceTest class missing from sprint2-leave-balance—cannot validate without it
 - LeaveBalanceEngine Apex classes not yet deployed to org—cannot re-run tests to confirm field access resolves failures
-- Data Cloud tools unavailable—Revecast Orchestrate Connector package needs upgrade for missing scopes
 
 **Next**
-- Start new session with org orgfarm-232477b490-dev-ed connected and sprint2-leave-balance as working branch
-- Write LeaveBalanceServiceTest (snapshot, balance key, off switch, employee-user tests) or confirm if it exists elsewhere
+- Start new BUILD session with org orgfarm-232477b490-dev-ed (00DjV000003BVbRUAW) connected and sprint2-leave-balance as working branch
+- Write LeaveBalanceServiceTest or confirm if it exists elsewhere in the org
 - Run validation: sf project deploy validate --source-dir force-app --test-level RunSpecifiedTests --tests LeaveBalanceEngineTest LeaveBalanceServiceTest
-- Once validation passes, deploy Apex classes and re-run LeaveBalanceEngineTest to confirm Available_Days__c access resolves 19/21 and 20/36 failures
+- Once validation passes, deploy Apex classes and re-run LeaveBalanceEngineTest to confirm Available_Days__c access resolves failures
 
 **Checked live on 2026-10-14:** the repository
 ### Last session — 2026-10-14
@@ -87,21 +86,26 @@
 | Type | BUILD |
 | Outcome | COMPLETED |
 | Branch | `main` |
-| Name | sprint2-leave-balance |
-| Session | `2669e58c-d81c-4a11-8d1f-9efd169987d0` |
+| Session | `191892a7-fb48-4a29-9cb9-e09c7d97e80e` |
 **In its own words (excerpt):**
-I stopped before validating. Two things block it: the required test class `LeaveBalanceServiceTest` is missing from the branch, and no Salesforce org is connected to this session. No tests were run, so I have no pass/fail results or coverage numbers to report. Nothing was committed, deployed, or changed in the org, and I didn't touch the field or the permission sets.
+I stopped at the preconditions: both of them failed. I haven't changed, committed or deployed anything, and I didn't write any test code, because I can't validate it in this session.
 
-## Why I stopped
+## Precondition results
 
-1. **The test class isn't there.** `LeaveBalanceServiceTest` doesn't exist on `sprint2-leave-balance` (latest commit `82456e3`). It isn't in any earlier commit on any branch either, and no file in the repo refers to it. It has never been written. I didn't write it, because you asked me to stop if a test class was missing.
-2. **No org is connected.** The session started with no Salesforce org attached, and the Salesforce CLI shows no logged-in orgs. A validation run needs an org to run against. To validate `00DjV000003BVbRUAW`, start a new session with that org (`orgfarm-232477b490-dev-ed`) picked on the new-session form.
+| Check | Expected | Actual | Result |
+|---|---|---|---|
+| Authenticated org | `00DjV000003BVbRUAW` | **No org logged in.** `sf org list` came back empty and `sf org display` returned `NoDefaultEnvError: No default environment found.` | ❌ Fail |
+| Working branch | `sprint2-leave-balance` | **This session is pinned to `main`.** `sprint2-leave-balance` exists on the remote (`82456e3`). | ❌ Fail |
 
-## What's on the branch
+Neither can be fixed from inside this session. The org and the working branch are both set when a session starts.
 
-| Item | Present | Notes |
-|---|---|---|
-| `EmployeeLeaveTrigger` (trigger) | ✅ | Only trigger on the object; contains no logic; runs after insert/update/de
+## What I checked on the branch (read-only)
+
+The branch is at `82456e3`, the same commit the last session audited. It has `EmployeeLeave_TriggerHandler`, `LeaveBalanceService`, `LeaveBalanceRollupService`, `LeaveBalanceException` and `LeaveBalanceEngineTest`. **`LeaveBalanceServiceTest` is still missing.** The `EmployeeLeaveTrigger` trigger was reported present last session; I listed only the classes folder this time, so I didn't recheck it.
+
+## To unblock
+
+Start a new **B
 
 _[summary truncated — see the session record for the full text]_
 <!-- orchestrate:session-state:end -->
