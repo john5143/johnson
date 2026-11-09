@@ -2,39 +2,55 @@
 Name:          LeaveBalanceRollupService
 ================================================================
 Purpose:       Authoritative entitlement writer for the Employee
-               Leave Balance Engine (Sprint 2). Given a set of
-               BalanceKeys, it obtains Approved/Pending totals from
-               LeaveBalanceService (user-mode aggregate) and writes
-               Used_Days__c / Pending_Days__c back to the matching
-               Leave_Entitlement__c rows in ONE DML statement.
+               Leave Balance Engine (Sprint 2). For the buckets
+               touched by a leave save it (1) locks the matching
+               Leave_Entitlement__c rows, (2) totals EVERY Approved
+               and Pending leave row in the bucket in SYSTEM MODE,
+               and (3) writes Used_Days__c / Pending_Days__c back in
+               ONE system-mode DML statement.
 
-WHY without sharing (documented, narrow):
-               An employee editing their OWN Employee_Leave__c
-               typically has no edit access to the admin-owned
-               Leave_Entitlement__c balance record. The balance must
-               still reconcile regardless of the submitter's sharing,
-               so this single service runs "without sharing" and loads
-               entitlements WITH SYSTEM_MODE. Its surface is limited to
-               loading + updating entitlements for keys DERIVED FROM
-               TRIGGER DATA only; it accepts no caller-supplied UserIds
-               and no dynamic SOQL, so there is no privilege-escalation
-               surface.
+WHY system mode for the totals (the Sprint 2 fix):
+               The balance is a property of the employee, not of
+               the person saving. Totalling through the user-mode
+               LeaveBalanceService.computeTotals() counted only the
+               rows the saver could see, so a saver with restricted
+               leave visibility (external users, or a tightened
+               sharing model) would silently undercount the balance.
+               The aggregate here ignores sharing and FLS.
 
-               Never inserts Leave_Entitlement__c: a bucket with no
-               existing entitlement is simply skipped. Available_Days__c
-               is a formula and is never written.
+WHY system mode for the write:
+               An employee saving their OWN leave usually has only
+               read access to the admin-owned balance record. A
+               plain update failed with "DML operation UPDATE not
+               allowed on Leave_Entitlement__c" and rolled back the
+               leave save; "update as system" removes that coupling.
+
+WHY FOR UPDATE:
+               Two concurrent saves for the same bucket could each
+               compute totals and overwrite each other. Locking the
+               balance rows first serialises them; the second save
+               recomputes after the first commits.
+
+SAFETY:        Keys are derived from trigger data only; no caller-
+               supplied Ids and no dynamic SOQL, so there is no
+               privilege-escalation surface. Never inserts a
+               Leave_Entitlement__c (a bucket without one is
+               skipped) and never writes the Available_Days__c
+               formula.
 ================================================================
 History
 -------
 VERSION  AUTHOR              DATE         DETAIL    DESCRIPTION
 1.0      Revecast Orch.      2026-09-30   Created   Sprint 2 Leave Balance Engine
+1.1      Revecast Orch.      2026-11-09   Modified  System-mode totals, row lock,
+                                                    system-mode update
 *****************************************************************/
 public without sharing class LeaveBalanceRollupService {
 
     /**
-     * Recalculate and persist Used/Pending days for every supplied bucket
-     * that has an existing entitlement. Two SOQL (aggregate via service +
-     * entitlement load here), exactly one DML. No SOQL / DML in loops.
+     * Recalculate and persist Used/Pending days for every supplied bucket that
+     * has an existing entitlement. At most two SOQL (lock + aggregate) and one
+     * DML, whatever the batch size. No SOQL / DML in loops.
      */
     public static void recalculate(Set<LeaveBalanceService.BalanceKey> keys) {
         if (keys == null) {
@@ -45,55 +61,67 @@ public without sharing class LeaveBalanceRollupService {
             return;
         }
 
-        // 1. Approved/Pending totals per bucket (user-mode aggregate).
-        LeaveBalanceService service = new LeaveBalanceService();
-        Map<LeaveBalanceService.BalanceKey, LeaveBalanceService.BalanceTotals> totals =
-            service.computeTotals(keys);
+        LeaveBalanceService.KeyComponents parts = new LeaveBalanceService.KeyComponents(keys);
+        Set<Id> employeeIds = parts.employeeIds;
+        Set<String> leaveTypes = parts.leaveTypes;
+        Set<Integer> years = parts.years;
+        Set<Decimal> yearsAsDecimal = parts.yearsAsDecimal;
 
-        // 2. Load the matching entitlements authoritatively (system mode).
-        Set<Id> empIds = new Set<Id>();
-        Set<String> types = new Set<String>();
-        Set<Decimal> years = new Set<Decimal>();
-        for (LeaveBalanceService.BalanceKey k : keys) {
-            empIds.add(k.employeeId);
-            types.add(k.leaveType);
-            if (k.year != null) {
-                years.add((Decimal) k.year);
-            }
-        }
-
+        // 1. Lock the matching balances first so concurrent saves serialise.
         List<Leave_Entitlement__c> entitlements = [
             SELECT Id, Employee__c, Leave_Type__c, Year__c, Used_Days__c, Pending_Days__c
             FROM Leave_Entitlement__c
-            WHERE Employee__c IN :empIds
-              AND Leave_Type__c IN :types
-              AND Year__c IN :years
+            WHERE Employee__c IN :employeeIds
+              AND Leave_Type__c IN :leaveTypes
+              AND Year__c IN :yearsAsDecimal
             WITH SYSTEM_MODE
+            FOR UPDATE
         ];
+        // No balance to maintain: skip the aggregate query entirely.
+        if (entitlements.isEmpty()) {
+            return;
+        }
 
-        // 3. Apply totals; only for buckets that were actually requested.
+        // 2. Total every Approved / Pending row in system mode (no sharing, no FLS).
+        List<AggregateResult> rows = [
+            SELECT Employee__c emp, Leave_Type__c lt,
+                   CALENDAR_YEAR(Start_Date__c) yr, Status__c st,
+                   SUM(Total_Days__c) total
+            FROM Employee_Leave__c
+            WHERE Employee__c IN :employeeIds
+              AND Leave_Type__c IN :leaveTypes
+              AND CALENDAR_YEAR(Start_Date__c) IN :years
+              AND Status__c IN ('Approved', 'Pending')
+            WITH SYSTEM_MODE
+            GROUP BY Employee__c, Leave_Type__c, CALENDAR_YEAR(Start_Date__c), Status__c
+        ];
+        Map<LeaveBalanceService.BalanceKey, LeaveBalanceService.BalanceTotals> totals =
+            LeaveBalanceService.buildTotals(rows, keys);
+
+        // 3. Apply totals to requested buckets; collect only rows that changed.
         List<Leave_Entitlement__c> toUpdate = new List<Leave_Entitlement__c>();
-        for (Leave_Entitlement__c e : entitlements) {
-            Integer yr = (e.Year__c == null) ? null : e.Year__c.intValue();
-            LeaveBalanceService.BalanceKey k =
-                new LeaveBalanceService.BalanceKey(e.Employee__c, e.Leave_Type__c, yr);
-            if (!keys.contains(k)) {
+        for (Leave_Entitlement__c entitlement : entitlements) {
+            LeaveBalanceService.BalanceKey key = new LeaveBalanceService.BalanceKey(
+                entitlement.Employee__c, entitlement.Leave_Type__c,
+                entitlement.Year__c.intValue());
+            if (!keys.contains(key)) {
                 continue;
             }
-            LeaveBalanceService.BalanceTotals t = totals.get(k);
-            Decimal used = (t == null) ? 0 : t.usedDays;
-            Decimal pending = (t == null) ? 0 : t.pendingDays;
+            // A bucket with no Approved/Pending rows resets to zero.
+            LeaveBalanceService.BalanceTotals bucket = totals.get(key);
+            Decimal used = (bucket == null) ? 0 : bucket.usedDays;
+            Decimal pending = (bucket == null) ? 0 : bucket.pendingDays;
 
-            if (e.Used_Days__c != used || e.Pending_Days__c != pending) {
-                e.Used_Days__c = used;
-                e.Pending_Days__c = pending;
-                toUpdate.add(e);
+            if (entitlement.Used_Days__c != used || entitlement.Pending_Days__c != pending) {
+                entitlement.Used_Days__c = used;
+                entitlement.Pending_Days__c = pending;
+                toUpdate.add(entitlement);
             }
         }
 
-        // 4. Single authoritative DML. Available_Days__c recomputes as a formula.
+        // 4. Single system-mode DML. Available_Days__c recomputes as a formula.
         if (!toUpdate.isEmpty()) {
-            update toUpdate;
+            update as system toUpdate;
         }
     }
 }

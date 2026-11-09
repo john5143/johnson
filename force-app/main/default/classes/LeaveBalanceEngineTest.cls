@@ -361,4 +361,93 @@ private class LeaveBalanceEngineTest {
         System.assertEquals('Vacation', saved.Leave_Type__c, 'type persisted');
         System.assertEquals(e, saved.Employee__c, 'employee persisted');
     }
+
+    // ---- 23. Approved -> Cancelled releases used days ----------------
+    // Expect: cancelling an approved leave returns its days to the balance.
+    @isTest static void testApprovedToCancelled() {
+        Id e = getUser('EmpOne').Id;
+        Employee_Leave__c l = leave(e, 'Vacation', 'Approved', Date.newInstance(2026, 2, 1), 4);
+        insert l;
+        System.assertEquals(4, getEnt(e, 'Vacation', 2026).Used_Days__c, 'used 4');
+        Test.startTest();
+        l.Status__c = 'Cancelled';
+        update l;
+        Test.stopTest();
+        Leave_Entitlement__c en = getEnt(e, 'Vacation', 2026);
+        System.assertEquals(0, en.Used_Days__c, 'cancel releases used days');
+        System.assertEquals(0, en.Pending_Days__c, 'cancel adds no pending');
+        System.assertEquals(25, en.Available_Days__c, 'full 20 + 5 available again');
+    }
+
+    // ---- 24. delete one of several leaves keeps the rest -------------
+    // Expect: only the deleted row's days leave the bucket total.
+    @isTest static void testDeleteOneOfSeveral() {
+        Id e = getUser('EmpOne').Id;
+        List<Employee_Leave__c> rows = new List<Employee_Leave__c>{
+            leave(e, 'Vacation', 'Approved', Date.newInstance(2026, 1, 5), 2),
+            leave(e, 'Vacation', 'Approved', Date.newInstance(2026, 3, 5), 3),
+            leave(e, 'Vacation', 'Pending', Date.newInstance(2026, 4, 5), 4)
+        };
+        insert rows;
+        Test.startTest();
+        delete rows[1];
+        Test.stopTest();
+        Leave_Entitlement__c en = getEnt(e, 'Vacation', 2026);
+        System.assertEquals(2, en.Used_Days__c, 'only the remaining approved 2');
+        System.assertEquals(4, en.Pending_Days__c, 'pending untouched');
+    }
+
+    // ---- 25. editing an unrelated field leaves the balance intact -----
+    // Expect: a Reason__c edit recalculates to the same values (no drift).
+    @isTest static void testUnrelatedFieldEdit() {
+        Id e = getUser('EmpOne').Id;
+        Employee_Leave__c l = leave(e, 'Vacation', 'Approved', Date.newInstance(2026, 2, 1), 3);
+        insert l;
+        Test.startTest();
+        l.Reason__c = 'Family trip';
+        update l;
+        Test.stopTest();
+        Leave_Entitlement__c en = getEnt(e, 'Vacation', 2026);
+        System.assertEquals(3, en.Used_Days__c, 'used unchanged');
+        System.assertEquals(0, en.Pending_Days__c, 'pending unchanged');
+    }
+
+    // ---- 26. cross-year leave: START-YEAR ALLOCATION RULE -------------
+    // Current rule (kept until the business confirms otherwise): a leave
+    // spanning 30 Dec 2025 - 3 Jan 2026 counts ENTIRELY against 2025.
+    // If the rule changes, this test is the one to update.
+    @isTest static void testCrossYearCountsAgainstStartYear() {
+        Id e = getUser('EmpOne').Id;
+        Test.startTest();
+        insert leave(e, 'Vacation', 'Approved', Date.newInstance(2025, 12, 30), 5);
+        Test.stopTest();
+        System.assertEquals(5, getEnt(e, 'Vacation', 2025).Used_Days__c,
+            'all 5 days against the start year 2025');
+        System.assertEquals(0, getEnt(e, 'Vacation', 2026).Used_Days__c,
+            'nothing against the end year 2026');
+    }
+
+    // ---- 27. bulk 200 across several balances -------------------------
+    // Expect: one save of 200 rows spread over 3 employees and 2 types
+    // updates every bucket correctly within governor limits.
+    @isTest static void testBulkAcrossSeveralBalances() {
+        Id e1 = getUser('EmpOne').Id, e2 = getUser('EmpTwo').Id, e3 = getUser('EmpThree').Id;
+        List<Employee_Leave__c> batch = new List<Employee_Leave__c>();
+        for (Integer i = 0; i < 50; i++) {
+            batch.add(leave(e1, 'Vacation', 'Approved', Date.newInstance(2026, 1, 1), 1));
+            batch.add(leave(e1, 'Sick', 'Pending', Date.newInstance(2026, 2, 1), 1));
+            batch.add(leave(e2, 'Vacation', 'Approved', Date.newInstance(2026, 3, 1), 1));
+            batch.add(leave(e3, 'Vacation', 'Pending', Date.newInstance(2026, 4, 1), 1));
+        }
+        Test.startTest();
+        insert batch;
+        System.assert(Limits.getQueries() <= 10, 'bulk-safe SOQL, got ' + Limits.getQueries());
+        System.assert(Limits.getDmlStatements() <= 5,
+            'bulk-safe DML, got ' + Limits.getDmlStatements());
+        Test.stopTest();
+        System.assertEquals(50, getEnt(e1, 'Vacation', 2026).Used_Days__c, 'e1 vacation used 50');
+        System.assertEquals(50, getEnt(e1, 'Sick', 2026).Pending_Days__c, 'e1 sick pending 50');
+        System.assertEquals(50, getEnt(e2, 'Vacation', 2026).Used_Days__c, 'e2 vacation used 50');
+        System.assertEquals(50, getEnt(e3, 'Vacation', 2026).Pending_Days__c, 'e3 vacation pending 50');
+    }
 }
