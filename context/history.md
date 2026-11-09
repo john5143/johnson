@@ -1,8 +1,8 @@
-# History — {{PROJECT_NAME}}
+# History — Sprint 2 - Leave Balance Engine
 
 > What shipped, what was parked, what was abandoned — **dated**. Newest first.
 
-**Last reviewed:** 2026-10-05
+**Last reviewed:** 2026-11-09
 
 > Dates, never relative time. "Shipped 2026-04-12", not "shipped last spring". Someone will read
 > this in 2027 and "last spring" will be meaningless.

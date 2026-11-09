@@ -3,7 +3,7 @@
 > The things that will bite the next person. **Append-only — this file only grows.**
 > [`handoff.md`](handoff.md) is *now*; this is *forever*.
 
-**Last reviewed:** 2026-10-05
+**Last reviewed:** 2026-11-09
 
 ## How to write one
 

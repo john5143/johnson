@@ -2,7 +2,7 @@
 
 > Orgs, sandboxes, endpoints and **credential references**. Never credential values.
 
-**Last reviewed:** 2026-10-05
+**Last reviewed:** 2026-11-09
 
 ## ⚠️ Never put secrets in this file
 

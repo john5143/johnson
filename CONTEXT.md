@@ -1,11 +1,11 @@
 <!-- orchestrate:template-version: v1.0.0 -->
-# Context — {{CLIENT_NAME}} / {{PROJECT_NAME}}
+# Context — {{CLIENT_NAME}} / Sprint 2 - Leave Balance Engine
 
 > **This file is the index.** It is loaded into every Orchestrate session on this repo, so it stays
 > short — target 150 lines, hard ceiling 200. One line per entry pointing at the detail file. Put the
 > detail in `context/`, not here.
 
-**Last reviewed:** 2026-10-05 · **Maintained by:** the team working this engagement
+**Last reviewed:** 2026-11-09 · **Maintained by:** the team working this engagement
 
 ---
 
@@ -41,7 +41,7 @@
 | Primary Salesforce org | {{SF_ORG_ALIAS}} |
 | Sandbox(es) | *see [`context/environment.md`](context/environment.md)* |
 | Delivery methodology | Jax: Launch · Define · Develop · Test · Release · Sustain |
-| Repo | `nagarurijohnson-oss/johnson` |
+| Repo | `john5143/johnson` |
 | Default branch | `main` |
 
 ## Current state

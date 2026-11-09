@@ -3,7 +3,7 @@
 > Who they are and who decides things. Changes on a different clock than `environment.md` — a reorg
 > does not invalidate a sandbox URL, which is why these are separate files.
 
-**Last reviewed:** 2026-10-05
+**Last reviewed:** 2026-11-09
 
 ## Who they are
 

@@ -1,8 +1,8 @@
-# Goals — {{PROJECT_NAME}}
+# Goals — Sprint 2 - Leave Balance Engine
 
 > What we are solving, how we will know it worked, and what the constraints are.
 
-**Last reviewed:** 2026-10-05
+**Last reviewed:** 2026-11-09
 
 ## The problem
 
